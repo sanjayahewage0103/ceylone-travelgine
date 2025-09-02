@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for Ceylone Travelgine */
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: #f8fafc;
+}
