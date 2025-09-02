@@ -5,13 +5,15 @@ import PendingApproval from '../components/PendingApproval';
 
 const bgImage = 'https://images.unsplash.com/photo-1596354394985-bab185799a4e';
 
+
 function AuthPage() {
   const [view, setView] = useState('login');
   const [pending, setPending] = useState(false);
+  const bgImage = 'https://images.unsplash.com/photo-1596354394985-bab185799a4e';
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: `url(${bgImage})` }}>
-      <div className="bg-white bg-opacity-80 rounded-xl shadow-lg p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-secondary/10 to-white" style={{ backgroundImage: `url(${bgImage})` }}>
+      <div className="bg-white bg-opacity-90 rounded-xl shadow-2xl p-8 w-full max-w-md border border-gray-200 animate-fade-in">
         {pending ? (
           <PendingApproval onBack={() => { setPending(false); setView('login'); }} />
         ) : view === 'login' ? (
