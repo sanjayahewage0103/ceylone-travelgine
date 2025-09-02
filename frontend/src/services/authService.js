@@ -5,6 +5,10 @@ class AuthService {
 	}
 
 	async register(userData) {
+		// Ensure role is present in userData
+		if (!userData.role) {
+			throw new Error('Role is required for registration');
+		}
 		const response = await fetch(`${this.baseURL}/register`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
