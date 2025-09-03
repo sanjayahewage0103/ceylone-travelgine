@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-// Admin routes for dashboard
-const express = require('express');
-const router = express.Router();
-const AdminController = require('../controllers/admin.controller');
-
-router.get('/dashboard', AdminController.getDashboardStats);
-=======
 const express = require('express');
 const router = express.Router();
 
@@ -22,6 +14,5 @@ router.put('/profiles/:role/:profileId/status', updateUserStatus);
 router.post('/users', addUser);
 router.put('/users/:userId', editUser);
 router.delete('/users/:userId', deleteUser);
->>>>>>> backend-dev
 
 module.exports = router;
