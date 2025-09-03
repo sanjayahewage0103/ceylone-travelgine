@@ -30,7 +30,13 @@ const productService = require('../services/product.service');
 // Controller: OOP, delegates to service, handles req/res
 exports.createProduct = async (req, res) => {
   try {
-    const vendorId = req.user._id;
+    // Find the Vendor profile for this user
+    const Vendor = require('../models/vendor.model');
+    const vendorProfile = await Vendor.findOne({ userId: req.user._id });
+    if (!vendorProfile) {
+      return res.status(400).json({ error: 'Vendor profile not found for this user.' });
+    }
+    const vendorId = vendorProfile._id;
     const { originalItemId, name, description, price, category, stockQuantity } = req.body;
     // Images: multer files (array)
     const images = (req.files && req.files.length > 0) ? req.files.map(f => `/uploads/${f.filename}`) : [];

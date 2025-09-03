@@ -1,6 +1,32 @@
 class AdminService {
   baseUrl = "/api/admin";
 
+  async getPendingProducts(queryString = '') {
+    const res = await fetch(`/api/admin/products/pending${queryString ? '?' + queryString : ''}`);
+    if (!res.ok) throw new Error('Failed to fetch pending products');
+    return res.json();
+  }
+
+  async setProductApproval(productId, action) {
+    const res = await fetch(`/api/admin/products/${productId}/approval`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action })
+    });
+    if (!res.ok) throw new Error('Failed to update product approval');
+    return res.json();
+  }
+
+  async getProductApprovalStats() {
+    // For demo, call dashboard stats and count products
+    const statsRes = await this.getDashboardStats();
+    // You may want to call a dedicated endpoint for product/shop/vendor counts
+    return {
+      productCount: statsRes.pendingVendors + statsRes.pendingGuides + (statsRes.totalProducts || 0),
+      vendorCount: statsRes.vendorCount,
+      shopCount: statsRes.vendorCount // assuming 1 shop per vendor
+    };
+  }
   async approveOrRejectProfile(profileId, role, newStatus) {
     const res = await fetch(`${this.baseUrl}/profiles/${role}/${profileId}/status`, {
       method: "PUT",
@@ -10,7 +36,6 @@ class AdminService {
     if (!res.ok) throw new Error("Failed to update profile status");
     return res.json();
   }
-  baseUrl = "/api/admin";
 
   async getDashboardStats() {
     const res = await fetch(`${this.baseUrl}/stats`);
@@ -40,7 +65,6 @@ class AdminService {
     if (!res.ok) throw new Error("Failed to update user status");
     return res.json();
   }
-
 
   async getUserById(userId) {
     const res = await fetch(`${this.baseUrl}/users/${userId}`);

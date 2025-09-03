@@ -10,6 +10,8 @@ import GuideAuthPage from './pages/guide/GuideAuthPage';
 import GuideRegisterSinglePage from './components/guide/GuideRegisterSinglePage';
 import DashboardPage from './pages/admin/DashboardPage';
 import ManageUsersPage from './pages/admin/ManageUsersPage';
+import PendingProductsPage from './pages/admin/PendingProductsPage';
+import ManageProductsPage from './pages/admin/ManageProductsPage';
 import AdminLayout from './layouts/AdminLayout';
 
 
@@ -20,8 +22,9 @@ function App() {
       <Route path="/admin/login" element={<AdminLoginPage />} />
       {/* Admin routes with sidebar layout */}
       <Route path="/admin" element={<AdminLayout />}>
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="users" element={<ManageUsersPage />} />
+  <Route path="dashboard" element={<DashboardPage />} />
+  <Route path="users" element={<ManageUsersPage />} />
+  <Route path="products/manage" element={<ManageProductsPage />} />
       </Route>
       {/* Other auth routes */}
       <Route path="/tourist" element={<TouristAuthPage />} />

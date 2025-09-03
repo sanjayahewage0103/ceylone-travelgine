@@ -1,3 +1,56 @@
+// Get all products (approved, rejected, pending)
+const getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.find({}).populate({
+      path: 'vendorId',
+      select: 'shopName businessRegNum location address userId',
+      populate: { path: 'userId', select: 'fullName email contact' }
+    });
+    console.log('DEBUG getAllProducts:', JSON.stringify(products, null, 2));
+    res.json(products);
+  } catch (err) {
+    console.error('getAllProducts error:', err);
+    res.status(500).json({ message: err.message, stack: err.stack });
+  }
+};
+const Product = require('../models/product.model');
+
+// Get all pending products with optional search/filter
+const getPendingProducts = async (req, res) => {
+  try {
+    const { search = '', category = '' } = req.query;
+    const query = { isApproved: 'pending' };
+    if (search) query.name = { $regex: search, $options: 'i' };
+    if (category) query.category = category;
+    const products = await Product.find(query).populate({
+      path: 'vendorId',
+      select: 'shopName businessRegNum location address userId',
+      populate: { path: 'userId', select: 'fullName email contact' }
+    });
+    console.log('DEBUG getPendingProducts:', JSON.stringify(products, null, 2));
+    res.json(products);
+  } catch (err) {
+    console.error('getPendingProducts error:', err);
+    res.status(500).json({ message: err.message, stack: err.stack });
+  }
+};
+
+// Approve or reject a product
+const setProductApproval = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body; // 'approve' or 'reject'
+    if (!['approve', 'reject'].includes(action)) return res.status(400).json({ message: 'Invalid action' });
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    product.isApproved = action === 'approve' ? 'approved' : 'rejected';
+    await product.save();
+    res.json(product);
+  } catch (err) {
+    console.error('setProductApproval error:', err);
+    res.status(500).json({ message: err.message, stack: err.stack });
+  }
+};
 // Dashboard stats endpoint
 const getDashboardStats = async (req, res) => {
   try {
@@ -11,7 +64,8 @@ const getDashboardStats = async (req, res) => {
       ...stats
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('getDashboardStats error:', err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 };
 
@@ -23,7 +77,8 @@ const getPendingApprovals = async (req, res) => {
     const pending = users.filter(u => u.profile && u.profile.status === 'pending');
     res.json(pending);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('getPendingApprovals error:', err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 };
 // Add new user (admin only)
@@ -32,7 +87,8 @@ const addUser = async (req, res) => {
     const user = await adminService.addUser(req.body);
     res.status(201).json(user);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('addUser error:', err);
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 };
 
@@ -43,7 +99,8 @@ const editUser = async (req, res) => {
     const user = await adminService.editUser(userId, req.body);
     res.json(user);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('editUser error:', err);
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 };
 
@@ -54,7 +111,8 @@ const deleteUser = async (req, res) => {
     const result = await adminService.deleteUser(userId);
     res.json(result);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('deleteUser error:', err);
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 };
 
@@ -67,7 +125,8 @@ const getAllUsers = async (req, res) => {
     const users = await adminService.getAllUsers(filters);
     res.json(users);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('getAllUsers error:', err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 };
 
@@ -77,7 +136,8 @@ const getUserDetails = async (req, res) => {
     const user = await adminService.getUserDetails(req.params.userId);
     res.json(user);
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    console.error('getUserDetails error:', err);
+    res.status(404).json({ message: err.message, stack: err.stack });
   }
 };
 
@@ -89,7 +149,8 @@ const updateUserStatus = async (req, res) => {
     const result = await adminService.updateUserStatus(profileId, role, newStatus);
     res.json(result);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('updateUserStatus error:', err);
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 };
 
@@ -102,4 +163,7 @@ module.exports = {
   deleteUser,
   getDashboardStats,
   getPendingApprovals,
+  getPendingProducts,
+  setProductApproval,
+  getAllProducts,
 };

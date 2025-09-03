@@ -4,6 +4,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 const sidebarLinks = [
   { to: '/admin/dashboard', label: 'Dashboard' },
   { to: '/admin/users', label: 'Manage Users' },
+  { to: '/admin/products/manage', label: 'Manage Products' },
 ];
 
 const AdminLayout = () => {

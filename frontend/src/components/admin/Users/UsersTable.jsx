@@ -9,6 +9,7 @@ const UsersTable = ({ users, onView, onEdit, onDelete, onApprove, onReject }) =>
           <th>Name</th>
           <th>Email</th>
           <th>Role</th>
+          <th>Shop Name</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -19,6 +20,7 @@ const UsersTable = ({ users, onView, onEdit, onDelete, onApprove, onReject }) =>
             <td>{user.fullName}</td>
             <td>{user.email}</td>
             <td>{user.role}</td>
+            <td>{user.role === 'vendor' && user.profile ? user.profile.shopName : '-'}</td>
             <td>{user.profile?.status || '-'}</td>
             <td className="flex gap-2 flex-wrap">
               <button className="text-blue-600 underline" onClick={() => onView(user)}>View</button>
