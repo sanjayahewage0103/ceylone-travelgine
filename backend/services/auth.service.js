@@ -67,14 +67,31 @@ const register = async (data) => {
   return { userId: userDoc._id, pending: role === 'vendor' || role === 'guide' };
 };
 
+
 const login = async (email, password) => {
   if (!email || !password) throw new Error('Missing credentials');
   const user = await User.findOne({ email });
   if (!user) throw new Error('User not found');
   const isMatch = await bcrypt.compare(password, user.passwordHash);
   if (!isMatch) throw new Error('Invalid credentials');
+  let vendorStatus = undefined;
+  if (user.role === 'vendor') {
+    const vendorProfile = await Vendor.findOne({ userId: user._id });
+    vendorStatus = vendorProfile ? vendorProfile.status : undefined;
+  }
   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1d' });
-  return { token, user: { id: user._id, role: user.role, fullName: user.fullName, email: user.email, contact: user.contact, nic: user.nic } };
+  return {
+    token,
+    user: {
+      id: user._id,
+      role: user.role,
+      fullName: user.fullName,
+      email: user.email,
+      contact: user.contact,
+      nic: user.nic,
+      status: vendorStatus // only for vendor
+    }
+  };
 };
 
 module.exports = { register, login };

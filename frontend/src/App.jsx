@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import TouristAuthPage from './pages/tourist/TouristAuthPage';
 import VendorAuthPage from './pages/vendor/VendorAuthPage';
+import VendorDashboardPage from './pages/vendor/VendorDashboardPage';
 import GuideAuthPage from './pages/guide/GuideAuthPage';
 import GuideRegisterSinglePage from './components/guide/GuideRegisterSinglePage';
 import DashboardPage from './pages/admin/DashboardPage';
@@ -24,7 +25,8 @@ function App() {
       </Route>
       {/* Other auth routes */}
       <Route path="/tourist" element={<TouristAuthPage />} />
-      <Route path="/vendor" element={<VendorAuthPage />} />
+  <Route path="/vendor" element={<VendorAuthPage />} />
+  <Route path="/vendor/dashboard" element={<VendorDashboardPage />} />
       {/* <Route path="/vendor/register2" element={<RegisterVendor2 />} /> */}
       <Route path="/guide" element={<GuideAuthPage />} />
       <Route path="/guide/register2" element={<GuideRegisterSinglePage />} />
