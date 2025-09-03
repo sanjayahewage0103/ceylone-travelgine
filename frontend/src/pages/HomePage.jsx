@@ -12,7 +12,9 @@ const HomePage = () => (
       <Link to="/tourist">
         <button className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition">Tourist Portal</button>
       </Link>
-
+      <Link to="/vendor">
+        <button className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition">Vendor Portal</button>
+      </Link>
     </div>
   </div>
 );
