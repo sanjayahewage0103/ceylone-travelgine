@@ -9,17 +9,16 @@ class AuthService {
 			throw new Error('Role is required for registration');
 		}
 		let response, data;
-		// Use FormData for vendor registration (file upload)
-		if (userData.role === 'vendor') {
+		// Use FormData for vendor and guide registration (file upload)
+		if (userData.role === 'vendor' || userData.role === 'guide') {
 			const formData = new FormData();
-			// Send all vendor fields as flat keys for backend compatibility
 			Object.entries(userData).forEach(([key, value]) => {
 				if (value !== undefined && value !== null) {
 					formData.append(key, value);
 				}
 			});
 			// Debug: print FormData keys before sending
-			console.log('FormData keys for vendor registration:');
+			console.log('FormData keys for', userData.role, 'registration:');
 			for (let key of formData.keys()) {
 				console.log(key);
 			}

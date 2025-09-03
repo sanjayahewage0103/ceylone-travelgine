@@ -15,6 +15,9 @@ const HomePage = () => (
       <Link to="/vendor">
         <button className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition">Vendor Portal</button>
       </Link>
+      <Link to="/guide/register2">
+        <button className="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700 transition">Register as a Tour Guide (Single Page)</button>
+      </Link>
     </div>
   </div>
 );

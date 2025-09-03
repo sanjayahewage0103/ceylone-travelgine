@@ -6,13 +6,23 @@ const register = async (req, res) => {
     // For FormData, fields are in req.body, files in req.files
     const data = { ...req.body };
 
-    // Attach file paths if files are present
+    // Attach file paths for guide registration
     if (req.files) {
-      if (req.files.logo) {
-        data.logoUrl = req.files.logo[0].path;
+      if (req.files.profilePic) {
+        data.profilePicUrl = req.files.profilePic[0].path;
+      }
+      if (req.files.verificationPhoto) {
+        data.verificationPhotoUrl = req.files.verificationPhoto[0].path;
+      }
+      if (req.files.sltdaLicensePic) {
+        data.sltdaLicensePicUrl = req.files.sltdaLicensePic[0].path;
       }
       if (req.files.documentPdf) {
         data.documentPdfUrl = req.files.documentPdf[0].path;
+      }
+      // Vendor files
+      if (req.files.logo) {
+        data.logoUrl = req.files.logo[0].path;
       }
     }
 
@@ -30,6 +40,24 @@ const register = async (req, res) => {
       // Debug log for vendor registration
       console.log('Vendor registration received data:', data);
       console.log('Grouped shopDetails:', data.shopDetails);
+    }
+
+    // Group guide fields into guideDetails if role is guide
+    if (data.role === 'guide') {
+      data.guideDetails = {
+        sltdaRegNum: data.sltdaRegNum,
+        experienceYears: data.experienceYears,
+        languagesSpoken: Array.isArray(data.languagesSpoken) ? data.languagesSpoken : (data.languagesSpoken ? data.languagesSpoken.split(',').map(s => s.trim()) : []),
+        tourTypesOffered: Array.isArray(data.tourTypesOffered) ? data.tourTypesOffered : (data.tourTypesOffered ? data.tourTypesOffered.split(',').map(s => s.trim()) : []),
+        bio: data.bio,
+        profilePicUrl: data.profilePicUrl,
+        verificationPhotoUrl: data.verificationPhotoUrl,
+        sltdaLicensePicUrl: data.sltdaLicensePicUrl,
+        documentPdfUrl: data.documentPdfUrl
+      };
+      // Debug log for guide registration
+      console.log('Guide registration received data:', data);
+      console.log('Grouped guideDetails:', data.guideDetails);
     }
 
     // Now pass data to your service
