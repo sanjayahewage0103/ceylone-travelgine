@@ -1,10 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-const { getAllUsers, getUserDetails, updateUserStatus, addUser, editUser, deleteUser } = require('../controllers/admin.controller');
+const { getAllUsers, getUserDetails, updateUserStatus, addUser, editUser, deleteUser, getDashboardStats, getPendingApprovals } = require('../controllers/admin.controller');
+
+// Dashboard endpoints
+router.get('/stats', getDashboardStats);
+router.get('/pending', getPendingApprovals);
 const { auth, isAdmin } = require('../middleware/auth.middleware');
 
+
+// All admin routes must be protected by both auth and isAdmin
 router.use(auth, isAdmin);
+
+
 
 router.get('/users', getAllUsers);
 router.get('/users/:userId', getUserDetails);
