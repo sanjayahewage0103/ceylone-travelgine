@@ -1,8 +1,41 @@
+// Get unique categories from approved products
+exports.getProductCategories = async (req, res) => {
+  try {
+    const Product = require('../models/product.model');
+    const categories = await Product.distinct('category', { isApproved: 'approved', isActive: true });
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get full vendor details for shops with approved products
+exports.getProductShops = async (req, res) => {
+  try {
+    const Product = require('../models/product.model');
+    const Vendor = require('../models/vendor.model');
+    // Get vendorIds from approved products
+    const vendorIds = await Product.distinct('vendorId', { isApproved: 'approved', isActive: true });
+    // Get full vendor details for those vendors
+    const shops = await Vendor.find({ _id: { $in: vendorIds } })
+      .select('shopName location description files.logoUrl')
+      .lean();
+    res.json(shops.map(shop => ({
+      id: shop._id,
+      shopName: shop.shopName,
+      location: shop.location,
+      description: shop.description,
+      logoUrl: shop.files && shop.files.logoUrl ? shop.files.logoUrl : undefined
+    })));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 // Public: Get latest 10 approved and active products for marketplace
 exports.getFeaturedProducts = async (req, res) => {
   try {
     const Product = require('../models/product.model');
-    const { search = '', category = '' } = req.query;
+    const { search = '', category = '', minPrice, maxPrice, shop } = req.query;
     let query = { isApproved: 'approved', isActive: true };
     if (search) {
       query.$or = [
@@ -13,6 +46,19 @@ exports.getFeaturedProducts = async (req, res) => {
     }
     if (category) {
       query.category = category;
+    }
+    if (minPrice) {
+      query.price = { ...query.price, $gte: Number(minPrice) };
+    }
+    if (maxPrice) {
+      query.price = { ...query.price, $lte: Number(maxPrice) };
+    }
+    if (shop) {
+      // Find vendorId(s) for the given shop name
+      const Vendor = require('../models/vendor.model');
+      const vendors = await Vendor.find({ shopName: shop }, '_id');
+      const vendorIds = vendors.map(v => v._id);
+      query.vendorId = { $in: vendorIds };
     }
     const products = await Product.find(query)
       .sort({ createdAt: -1 })

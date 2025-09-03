@@ -3,8 +3,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import MainNavbar from '../components/common/MainNavbar';
 
+
 const HomePage = () => (
-  <>
+  <>  
     <MainNavbar />
     <div className="flex flex-col items-center justify-center min-h-screen">
       <h1 className="text-3xl font-bold mb-6">Welcome to Ceylone Travelgine</h1>
