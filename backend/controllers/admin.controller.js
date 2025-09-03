@@ -1,3 +1,39 @@
+// Add new user (admin only)
+const addUser = async (req, res) => {
+  try {
+    const { fullName, email, contact, nic, passwordHash, role } = req.body;
+    if (!fullName || !email || !contact || !passwordHash || !role) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    const user = await adminService.addUser({ fullName, email, contact, nic, passwordHash, role });
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Edit user (admin only)
+const editUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const updates = req.body;
+    const user = await adminService.editUser(userId, updates);
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Delete user (admin only)
+const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    await adminService.deleteUser(userId);
+    res.json({ message: 'User deleted' });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
 const User = require('../models/user.model');
 const Vendor = require('../models/vendor.model');
 const Guide = require('../models/guide.model');
@@ -138,15 +174,28 @@ const updateUserStatus = async (req, res) => {
   try {
     const { profileId, role } = req.params;
     const { newStatus } = req.body;
+    console.log('[updateUserStatus] role:', role, 'profileId:', profileId, 'newStatus:', newStatus);
+    if (!['vendor', 'guide'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role. Must be vendor or guide.' });
+    }
+    if (!profileId || profileId.length !== 24) {
+      return res.status(400).json({ message: 'Invalid profileId.' });
+    }
+    if (!['approved', 'rejected', 'pending'].includes(newStatus)) {
+      return res.status(400).json({ message: 'Invalid newStatus.' });
+    }
     const result = await adminService.updateUserStatus(profileId, role, newStatus);
     res.json(result);
   } catch (err) {
+    console.error('[updateUserStatus] error:', err);
     res.status(400).json({ message: err.message });
   }
 };
 
-module.exports = { getAllUsers, getUserDetails, updateUserStatus };
 module.exports = {
+  getAllUsers,
+  getUserDetails,
+  updateUserStatus,
   requireAdmin,
   getStats,
   listPendingVendors,
@@ -156,4 +205,7 @@ module.exports = {
   viewUser,
   addVendor,
   addGuide,
+  addUser,
+  editUser,
+  deleteUser,
 };

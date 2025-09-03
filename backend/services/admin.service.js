@@ -48,6 +48,29 @@ class AdminService {
 
     return { message: `Profile ${role} status updated to ${newStatus}` };
   }
+
+  async addUser(userData) {
+    // You may want to hash the password here if not already hashed
+    const user = new User(userData);
+    await user.save();
+    return user;
+  }
+
+  async editUser(userId, updates) {
+    const user = await User.findByIdAndUpdate(userId, updates, { new: true });
+    if (!user) throw new Error('User not found');
+    return user;
+  }
+
+  async deleteUser(userId) {
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) throw new Error('User not found');
+    // Optionally, delete related vendor/guide profiles
+    await Vendor.deleteMany({ userId });
+    await Guide.deleteMany({ userId });
+    return;
+  }
 }
+
 
 module.exports = new AdminService();
