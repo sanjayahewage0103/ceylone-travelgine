@@ -9,14 +9,14 @@ const HomePage = () => (
       <Link to="/admin/login">
         <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Admin Login</button>
       </Link>
-      <Link to="/tourist">
-        <button className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition">Tourist Portal</button>
+      <Link to="/tourist/login">
+        <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Tourist Login</button>
       </Link>
-      <Link to="/vendor">
-        <button className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition">Vendor Portal</button>
+      <Link to="/guide/login">
+        <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">Guide Login</button>
       </Link>
-      <Link to="/guide/register2">
-        <button className="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700 transition">Register as a Tour Guide (Single Page)</button>
+      <Link to="/vendor/login">
+        <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">Vendor Login</button>
       </Link>
     </div>
   </div>

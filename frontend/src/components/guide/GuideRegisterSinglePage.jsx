@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
-import GuideRegistrationStepC from './GuideRegistrationStepC';
 import { Link } from 'react-router-dom';
 import authService from '../../services/authService';
 

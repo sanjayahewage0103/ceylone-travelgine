@@ -1,5 +1,6 @@
 // AdminLoginPage.jsx: Container for admin login logic
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Login from '../../components/shared/Login';
 import authService from '../../services/authService';
 
@@ -8,6 +9,7 @@ const AdminLoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (email, password) => {
     setLoading(true);
@@ -16,7 +18,7 @@ const AdminLoginPage = () => {
     try {
       const result = await authService.login(email, password);
       setSuccess('Login successful!');
-      // Optionally, save token or redirect here
+      navigate('/admin/dashboard'); // Redirect after successful login
     } catch (err) {
       setError(err.message);
       console.error('Login error:', err);
