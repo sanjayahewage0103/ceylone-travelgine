@@ -24,14 +24,19 @@ class VendorService {
 
   async updateProfile(data) {
     const token = this.getToken();
-    const res = await fetch(`${this.baseUrl}/me`, {
+    let options = {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : '',
+        'Authorization': token ? `Bearer ${token}` : ''
       },
-      body: JSON.stringify(data)
-    });
+      body: data
+    };
+    // If not FormData, fallback to JSON
+    if (!(data instanceof FormData)) {
+      options.headers['Content-Type'] = 'application/json';
+      options.body = JSON.stringify(data);
+    }
+    const res = await fetch(`${this.baseUrl}/me`, options);
     if (!res.ok) throw new Error('Failed to update vendor profile');
     return res.json();
   }
