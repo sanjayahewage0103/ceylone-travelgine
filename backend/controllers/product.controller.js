@@ -1,3 +1,32 @@
+// Public: Get latest 10 approved and active products for marketplace
+exports.getFeaturedProducts = async (req, res) => {
+  try {
+    const Product = require('../models/product.model');
+    const { search = '', category = '' } = req.query;
+    let query = { isApproved: 'approved', isActive: true };
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { category: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
+    }
+    if (category) {
+      query.category = category;
+    }
+    const products = await Product.find(query)
+      .sort({ createdAt: -1 })
+      .limit(search || category ? 100 : 10)
+      .populate({
+        path: 'vendorId',
+        select: 'shopName businessRegNum location address userId',
+        populate: { path: 'userId', select: 'fullName email contact' }
+      });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.updateProduct = async (req, res) => {
   try {
     const vendorId = req.user._id;

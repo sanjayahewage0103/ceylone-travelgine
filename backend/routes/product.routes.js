@@ -1,8 +1,11 @@
+
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/product.controller');
 const { authenticateVendor } = require('../middleware/auth');
 const upload = require('../config/upload');
+// Public: Get latest 10 approved and active products for marketplace
+router.get('/', productController.getFeaturedProducts);
 
 // Add product (with 1-5 images)
 router.post('/', authenticateVendor, upload.array('images'), productController.createProduct);

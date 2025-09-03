@@ -2,6 +2,8 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
+import MarketplacePage from './pages/marketplace/MarketplacePage';
+import CategoryPage from './pages/marketplace/CategoryPage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import TouristAuthPage from './pages/tourist/TouristAuthPage';
 import VendorAuthPage from './pages/vendor/VendorAuthPage';
@@ -19,7 +21,9 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/admin/login" element={<AdminLoginPage />} />
+  <Route path="/admin/login" element={<AdminLoginPage />} />
+  <Route path="/marketplace" element={<MarketplacePage />} />
+  <Route path="/marketplace/category/:categoryName" element={<CategoryPage />} />
       {/* Admin routes with sidebar layout */}
       <Route path="/admin" element={<AdminLayout />}>
   <Route path="dashboard" element={<DashboardPage />} />
