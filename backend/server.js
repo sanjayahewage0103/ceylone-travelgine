@@ -15,6 +15,8 @@ const productRoutes = require('./routes/product.routes');
 const cartRoutes = require('./routes/cart.routes');
 const orderRoutes = require('./routes/order.routes');
 
+const tourPackageRoutes = require('./routes/tourPackage.routes');
+
 dotenv.config();
 const app = express();
 
@@ -38,6 +40,8 @@ app.use('/api/vendors', vendorProductsRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
+
+app.use('/api/tour-packages', tourPackageRoutes);
 
 
 // Global error handler for uncaught exceptions and unhandled rejections

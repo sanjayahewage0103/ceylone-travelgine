@@ -17,8 +17,13 @@ class UserService {
     return await User.find(query).select('fullName email role status');
   }
 
-  async getUserDetails(userId) {
-    const user = await User.findById(userId).lean();
+  async getUserDetails(userId, opts = { lean: true }) {
+    let user;
+    if (opts.lean) {
+      user = await User.findById(userId).lean();
+    } else {
+      user = await User.findById(userId);
+    }
     if (!user) throw new Error('User not found');
     if (user.role === 'vendor') {
       const vendor = await Vendor.findOne({ userId });

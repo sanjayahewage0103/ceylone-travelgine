@@ -10,6 +10,7 @@ const guideSchema = new mongoose.Schema({
   bio: { type: String },
   files: {
     profilePicUrl: { type: String },
+    profileBanner: { type: String },
     verificationPhotoUrl: { type: String },
     sltdaLicensePicUrl: { type: String },
     documentPdfUrl: { type: String }
