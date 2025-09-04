@@ -1,9 +1,12 @@
-import React from 'react';
+
 import { useCart } from '../../context/CartContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const CartSummary = () => {
-  const { cart, checkout } = useCart();
+  const { cart } = useCart();
   const subtotal = cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white rounded-lg shadow p-6 w-full md:w-80">
@@ -12,7 +15,8 @@ const CartSummary = () => {
       <div className="flex justify-between font-bold text-lg mt-4 mb-2"><span>Total</span><span>Rs. {subtotal}</span></div>
       <button
         className="w-full bg-black text-white py-2 rounded-lg font-semibold text-base hover:bg-gray-900 transition mt-4"
-        onClick={checkout}
+        onClick={() => navigate('/checkout')}
+        disabled={cart.items.length === 0}
       >Go to Checkout →</button>
     </div>
   );

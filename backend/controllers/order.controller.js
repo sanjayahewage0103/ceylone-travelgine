@@ -23,15 +23,26 @@ exports.checkout = async (req, res) => {
       path: 'items.productId',
       populate: { path: 'vendorId', select: 'shopName' }
     });
-    if (!cart || cart.items.length === 0) return res.status(400).json({ error: 'Cart is empty' });
-    // Assume all items are from one vendor for simplicity
-    const vendorId = cart.items[0].productId.vendorId._id;
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({ error: 'Cart is empty' });
+    }
+    // Find the first product with a valid vendorId
+    let vendorId = null;
+    for (const item of cart.items) {
+      if (item.productId.vendorId && item.productId.vendorId._id) {
+        vendorId = item.productId.vendorId._id;
+        break;
+      }
+    }
+    if (!vendorId) {
+      return res.status(400).json({ error: 'One or more products in your cart are missing vendor/shop info. Please remove them and try again.' });
+    }
     // Prepare order items
     const items = cart.items.map(item => ({
       productId: item.productId._id,
       name: item.productId.name,
       image: item.productId.images?.[0] || '',
-      shopName: item.productId.vendorId.shopName,
+      shopName: item.productId.vendorId?.shopName,
       category: item.productId.category,
       price: item.price,
       quantity: item.quantity,

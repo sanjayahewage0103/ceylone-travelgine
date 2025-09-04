@@ -7,6 +7,8 @@ import CategoryPage from './pages/marketplace/CategoryPage';
 import ProductListPage from './pages/marketplace/ProductListPage';
 import ShopListPage from './pages/marketplace/ShopListPage';
 import ProductDetailPage from './pages/marketplace/ProductDetailPage';
+import CheckoutPage from './pages/marketplace/CheckoutPage';
+import OrderConfirmationPage from './pages/marketplace/OrderConfirmationPage';
 import CartPage from './pages/marketplace/CartPage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import TouristAuthPage from './pages/tourist/TouristAuthPage';
@@ -31,6 +33,8 @@ function App() {
   <Route path="/marketplace/product/:productId" element={<ProductDetailPage />} />
   <Route path="/marketplace/shops" element={<ShopListPage />} />
   <Route path="/cart" element={<CartPage />} />
+  <Route path="/checkout" element={<CheckoutPage />} />
+  <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
   <Route path="/marketplace/category/:categoryName" element={<CategoryPage />} />
       {/* Admin routes with sidebar layout */}
       <Route path="/admin" element={<AdminLayout />}>
