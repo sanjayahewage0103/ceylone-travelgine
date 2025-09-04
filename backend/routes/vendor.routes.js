@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const vendorController = require('../controllers/vendor.controller');
+const productController = require('../controllers/product.controller');
 const { authenticateVendor } = require('../middleware/auth');
 const upload = require('../config/upload');
 
@@ -13,5 +14,8 @@ router.put('/me', authenticateVendor, upload.fields([
 ]), vendorController.updateOwnProfile);
 // Public: Get vendor profile by vendorId (for user view)
 router.get('/:vendorId', vendorController.getVendorProfileById);
+
+// Get products for the logged-in vendor
+router.get('/me/products', authenticateVendor, productController.getVendorProducts);
 
 module.exports = router;

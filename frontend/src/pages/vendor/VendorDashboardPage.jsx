@@ -25,15 +25,28 @@ const VendorDashboardPage = () => {
       .then(data => {
         setVendor(data);
         setLoading(false);
+        console.debug('Vendor profile loaded:', data);
       })
       .catch(err => {
         setError('Failed to load vendor profile. Please login again.');
         setLoading(false);
+        console.error('Vendor profile load error:', err);
       });
     // Fetch vendor products
     productService.getVendorProducts()
-      .then(setProducts)
-      .catch(() => {});
+      .then(products => {
+        setProducts(products);
+        if (products.length === 0) {
+          setError('No products found for this vendor.');
+          console.warn('No products found for this vendor.');
+        } else {
+          console.debug('Vendor products loaded:', products);
+        }
+      })
+      .catch(err => {
+        setError('Failed to load vendor products.');
+        console.error('Vendor products load error:', err);
+      });
   }, []);
 
   const handleProfileUpdate = async (updatedFields) => {

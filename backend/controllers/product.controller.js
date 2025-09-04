@@ -150,10 +150,18 @@ exports.createProduct = async (req, res) => {
 
 exports.getVendorProducts = async (req, res) => {
   try {
-    const vendorId = req.user._id;
-    const products = await productService.getVendorProducts(vendorId);
+    const Vendor = require('../models/vendor.model');
+    const vendorProfile = await Vendor.findOne({ userId: req.user._id });
+    if (!vendorProfile) {
+      console.error('Vendor profile not found for user:', req.user._id);
+      return res.status(404).json({ error: 'Vendor profile not found.' });
+    }
+    console.log('getVendorProducts called for vendorId:', vendorProfile._id);
+    const products = await productService.getVendorProducts(vendorProfile._id);
+    console.log('Products found:', products.length);
     res.json(products);
   } catch (err) {
+    console.error('Error in getVendorProducts:', err);
     res.status(500).json({ error: err.message });
   }
 };

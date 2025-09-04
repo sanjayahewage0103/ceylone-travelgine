@@ -23,7 +23,7 @@ class ProductService {
 
   async getVendorProducts() {
     const token = this.getToken();
-    const res = await fetch(`${this.baseUrl}/vendor`, {
+    const res = await fetch('/api/vendors/me/products', {
       headers: {
         'Authorization': token ? `Bearer ${token}` : ''
       }

@@ -69,6 +69,17 @@ exports.checkout = async (req, res) => {
       paymentDetails: encryptedCard,
     });
     await order.save();
+
+    // Decrement product stockQuantity for each item
+    const Product = require('../models/product.model');
+    for (const item of items) {
+      await Product.findByIdAndUpdate(
+        item.productId,
+        { $inc: { stockQuantity: -item.quantity } },
+        { new: true }
+      );
+    }
+
     // Create payment record
     await Payment.create({
       orderId: order.orderId,
