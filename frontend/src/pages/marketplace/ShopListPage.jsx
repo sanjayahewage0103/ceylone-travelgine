@@ -3,35 +3,33 @@ import { Link } from 'react-router-dom';
 import MainNavbar from '../../components/common/MainNavbar';
 import MarketplaceNavbar from '../../components/marketplace/MarketplaceNavbar';
 
+
+import { useNavigate } from 'react-router-dom';
+
 function ShopCard({ shop }) {
   const [showFull, setShowFull] = useState(false);
   const maxDesc = 100;
   const desc = shop.description || '';
   const isLong = desc.length > maxDesc;
+  const navigate = useNavigate();
   return (
-    <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center text-center">
+    <div
+      className="bg-white rounded-lg shadow p-4 flex flex-col items-center text-center cursor-pointer hover:shadow-lg"
+      onClick={() => navigate(`/marketplace/vendor/${shop.id}`)}
+    >
       <img
         src={shop.logoUrl || '/shop-logo.png'}
         alt={shop.shopName}
         className="h-20 w-20 object-cover rounded-full mb-2 border"
       />
-      {shop.vendorId || shop._id ? (
-        <Link
-          to={`/marketplace/vendor/${shop.vendorId || shop._id}`}
-          className="font-bold text-lg text-green-800 mb-1 hover:underline hover:text-green-600"
-        >
-          {shop.shopName}
-        </Link>
-      ) : (
-        <span className="font-bold text-lg text-green-800 mb-1">{shop.shopName} <span className="text-xs text-red-500">(No vendorId)</span></span>
-      )}
+      <div className="font-bold text-lg text-green-800 mb-1">{shop.shopName}</div>
       <div className="text-gray-500 text-sm mb-1">{shop.location}</div>
       <div className="text-gray-700 text-sm mb-2">
         {showFull || !isLong ? desc : desc.slice(0, maxDesc) + '...'}
         {isLong && (
           <button
             className="text-green-700 ml-1 text-xs underline"
-            onClick={() => setShowFull(v => !v)}
+            onClick={e => { e.stopPropagation(); setShowFull(v => !v); }}
           >
             {showFull ? 'Show less' : 'Read more'}
           </button>

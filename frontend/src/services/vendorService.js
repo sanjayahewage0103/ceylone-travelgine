@@ -1,5 +1,5 @@
 class VendorService {
-  baseUrl = '/api/vendor';
+  baseUrl = '/api/vendors';
 
   getToken() {
     // Try localStorage first, fallback to sessionStorage
