@@ -18,6 +18,8 @@ router.post('/', authenticateVendor, upload.array('images'), productController.c
 router.get('/vendor', authenticateVendor, productController.getVendorProducts);
 
 
+// Get product by ID (public)
+router.get('/:id', productController.getProductById);
 // Edit product (description, price, stock, images, status)
 router.patch('/:id', authenticateVendor, upload.array('images'), productController.updateProduct);
 

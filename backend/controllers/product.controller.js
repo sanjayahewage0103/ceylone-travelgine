@@ -1,3 +1,19 @@
+// Get product by ID (public)
+exports.getProductById = async (req, res) => {
+  try {
+    const Product = require('../models/product.model');
+    const Vendor = require('../models/vendor.model');
+    const product = await Product.findById(req.params.id)
+      .populate({
+        path: 'vendorId',
+        select: 'shopName logo location description',
+      });
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 // Get unique categories from approved products
 exports.getProductCategories = async (req, res) => {
   try {
