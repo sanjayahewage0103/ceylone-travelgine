@@ -9,10 +9,37 @@ const statusColors = {
   cancelled: 'bg-red-100 text-red-800',
 };
 
+
+const OrderDetailModal = ({ order, onClose }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+      <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-800" onClick={onClose}>✕</button>
+      <h2 className="text-xl font-bold mb-2">Order Details: {order.orderId}</h2>
+      <div className="mb-2"><strong>Status:</strong> {order.orderStatus}</div>
+      {order.orderStatus === 'Completed' && (
+        <div className="mb-2"><strong>Completed At:</strong> {order.updatedAt ? new Date(order.updatedAt).toLocaleString() : 'N/A'}</div>
+      )}
+      <div className="mb-2"><strong>Customer:</strong> {order.user?.fullName || order.userId?.fullName || 'N/A'}</div>
+      <div className="mb-2"><strong>Delivery:</strong> {order.deliveryMethod} {order.deliveryAddress && `- ${order.deliveryAddress}`}</div>
+      <div className="mb-2"><strong>Contact:</strong> {order.contactNumber}</div>
+      <div className="mb-2"><strong>Payment:</strong> {order.paymentMethod} ({order.paymentStatus})</div>
+      <div className="mb-2"><strong>Total:</strong> LKR {order.totalAmount}</div>
+      <div className="mb-2"><strong>Items:</strong>
+        <ul className="list-disc ml-6">
+          {order.items.map(item => (
+            <li key={item.productId}>{item.name} x {item.quantity} @ LKR {item.price}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+);
+
 const VendorOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     orderService.getVendorOrders()
@@ -24,7 +51,6 @@ const VendorOrdersPage = () => {
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       await orderService.updateOrderStatus(orderId, newStatus);
-      // Re-fetch orders to ensure status is up to date
       setLoading(true);
       orderService.getVendorOrders()
         .then(setOrders)
@@ -34,6 +60,8 @@ const VendorOrdersPage = () => {
       setError('Failed to update order status.');
     }
   };
+
+  const handleViewDetails = (order) => setSelectedOrder(order);
 
   return (
     <div className="flex min-h-screen">
@@ -71,7 +99,7 @@ const VendorOrdersPage = () => {
                     <td className="px-4 py-2">
                       <span className={`px-2 py-1 rounded text-xs font-bold ${statusColors[order.orderStatus] || 'bg-gray-100 text-gray-800'}`}>{order.orderStatus}</span>
                     </td>
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-2 flex gap-2">
                       <select
                         value={order.orderStatus}
                         onChange={e => handleStatusChange(order.orderId, e.target.value)}
@@ -84,12 +112,19 @@ const VendorOrdersPage = () => {
                         <option value="Completed">Completed</option>
                         <option value="Rejected">Rejected</option>
                       </select>
+                      <button
+                        className="px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
+                        onClick={() => handleViewDetails(order)}
+                      >View Details</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+        )}
+        {selectedOrder && (
+          <OrderDetailModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />
         )}
       </main>
     </div>

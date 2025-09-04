@@ -42,7 +42,7 @@ const VendorAIForecastPage = () => {
         try {
             const [year, month] = forecastDate.split('-').map(Number);
             const requestBody = {
-                products: selectedProducts.map(p => ({ ...p, vendorId: selectedVendor.value, itemId: p.value })),
+                products: selectedProducts.map(p => ({ ...p, vendorId: Number(selectedVendor.value), itemId: p.value })),
                 forecast_date: { year, month }
             };
 

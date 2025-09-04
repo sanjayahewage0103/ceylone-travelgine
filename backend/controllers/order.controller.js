@@ -115,7 +115,9 @@ exports.getOrdersForVendor = async (req, res) => {
     // Find the Vendor document for this user
     const vendorDoc = await Vendor.findOne({ userId: req.user._id });
     if (!vendorDoc) return res.status(404).json({ error: 'Vendor profile not found' });
-    const orders = await Order.find({ vendorId: vendorDoc._id }).sort({ createdAt: -1 });
+    const orders = await Order.find({ vendorId: vendorDoc._id })
+      .sort({ createdAt: -1 })
+      .populate('userId', 'fullName email contact');
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });

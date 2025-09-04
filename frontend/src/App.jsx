@@ -55,7 +55,6 @@ function App() {
   <Route path="/vendor/dashboard" element={<VendorDashboardPage />} />
   <Route path="/vendor/orders" element={<VendorOrdersPage />} />
   <Route path="/vendor/sales-dashboard" element={<VendorSalesDashboardPage />} />
-  <Route path="/vendor/forecast" element={<VendorForecastingDashboard />} />
   <Route path="/vendor/ai-forecast" element={<VendorAIForecastPage />} />
       {/* <Route path="/vendor/register2" element={<RegisterVendor2 />} /> */}
       <Route path="/guide" element={<GuideAuthPage />} />
