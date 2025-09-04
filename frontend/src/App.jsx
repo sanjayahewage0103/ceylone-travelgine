@@ -19,6 +19,7 @@ import VendorOrdersPage from './pages/vendor/VendorOrdersPage';
 import VendorSalesDashboardPage from './pages/vendor/VendorSalesDashboardPage';
 import GuideAuthPage from './pages/guide/GuideAuthPage';
 import GuideRegisterSinglePage from './components/guide/GuideRegisterSinglePage';
+import GuideProfilePage from './pages/guide/GuideProfilePage';
 import DashboardPage from './pages/admin/DashboardPage';
 import ManageUsersPage from './pages/admin/ManageUsersPage';
 import PendingProductsPage from './pages/admin/PendingProductsPage';
@@ -57,7 +58,8 @@ function App() {
       <Route path="/guide/register2" element={<GuideRegisterSinglePage />} />
       <Route path="/tourist/login" element={<TouristAuthPage />} />
       <Route path="/vendor/login" element={<VendorAuthPage />} />
-      <Route path="/guide/login" element={<GuideRegisterSinglePage />} />
+  <Route path="/guide/login" element={<GuideRegisterSinglePage />} />
+  <Route path="/guide/profile" element={<GuideProfilePage />} />
     </Routes>
   );
 }

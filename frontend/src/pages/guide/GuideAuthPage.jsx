@@ -1,11 +1,19 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import GuideRegisterSinglePage from '../../components/guide/GuideRegisterSinglePage';
+import GuideLogin from '../../components/guide/GuideLogin';
 
 const GuideAuthPage = () => {
+  const [view, setView] = useState('login');
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-2xl p-8 bg-white rounded shadow">
-        <GuideRegisterSinglePage />
+        {view === 'register' ? (
+          <GuideRegisterSinglePage onSwitchToLogin={() => setView('login')} />
+        ) : (
+          <GuideLogin onSwitchToRegister={() => setView('register')} />
+        )}
       </div>
     </div>
   );

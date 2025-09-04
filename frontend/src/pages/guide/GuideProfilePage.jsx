@@ -1,22 +1,38 @@
-import React from 'react';
-import GuideSidebar from '../../components/guide/GuideSidebar';
-// import GuideCalendar from '../../components/guide/GuideCalendar'; // Placeholder for calendar
 
-const guideProfile = {
-  profilePicture: '/uploads/guide-profile.jpg', // Placeholder
-  fullName: 'Saman Perera',
-  sltdRegNum: 'SLTD-GUIDE-001',
-  bio: 'Experienced tour guide specializing in cultural and nature tours across Sri Lanka. Passionate about sharing local history and traditions.',
-  languages: ['English', 'Sinhala', 'German'],
-  contact: {
-    email: 'saman.perera@example.com',
-    phone: '+94 77 1234567',
-  },
-  status: 'Approved',
-  rating: 4.8,
-};
+import React, { useEffect, useState } from 'react';
+import GuideSidebar from '../../components/guide/GuideSidebar';
+import guideService from '../../services/guideService';
 
 const GuideProfilePage = () => {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('Not authenticated');
+        const data = await guideService.getProfile(token);
+        setProfile(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  if (loading) return <div className="p-8">Loading profile...</div>;
+  if (error) return <div className="p-8 text-red-600">{error}</div>;
+  if (!profile || !profile.guideProfile) return <div className="p-8">No guide profile found.</div>;
+
+  const guideProfile = profile.guideProfile;
+  const user = profile;
+
   return (
     <div className="flex min-h-screen">
       <GuideSidebar />
@@ -26,33 +42,31 @@ const GuideProfilePage = () => {
           {/* Profile Picture */}
           <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-8">
             <img
-              src={guideProfile.profilePicture}
+              src={guideProfile.files?.profilePicUrl || '/uploads/guide-profile.jpg'}
               alt="Profile"
               className="w-32 h-32 rounded-full object-cover border-4 border-blue-200 shadow"
             />
           </div>
           {/* Left Section */}
           <div className="flex-1 md:mr-8">
-            <h2 className="text-2xl font-bold mb-2">{guideProfile.fullName}</h2>
-            <div className="text-gray-600 mb-1">SLTD Reg #: <span className="font-mono">{guideProfile.sltdRegNum}</span></div>
+            <h2 className="text-2xl font-bold mb-2">{user.fullName}</h2>
+            <div className="text-gray-600 mb-1">SLTD Reg #: <span className="font-mono">{guideProfile.sltdaRegNum}</span></div>
             <div className="mb-2 text-gray-700">{guideProfile.bio}</div>
             <div className="mb-2">
-              <span className="font-semibold">Languages:</span> {guideProfile.languages.join(', ')}
+              <span className="font-semibold">Languages:</span> {guideProfile.languagesSpoken?.join(', ')}
             </div>
           </div>
           {/* Right Section */}
           <div className="flex flex-col items-start md:items-end">
             <div className="mb-2">
               <span className="font-semibold">Contact:</span>
-              <div className="text-gray-700">{guideProfile.contact.email}</div>
-              <div className="text-gray-700">{guideProfile.contact.phone}</div>
+              <div className="text-gray-700">{user.email}</div>
+              <div className="text-gray-700">{user.contact}</div>
             </div>
             <div className="mb-2">
               <span className="font-semibold">Status:</span> <span className="text-green-600 font-bold">{guideProfile.status}</span>
             </div>
-            <div className="mb-2">
-              <span className="font-semibold">Rating:</span> <span className="text-yellow-500 font-bold">{guideProfile.rating} ★</span>
-            </div>
+            {/* Rating placeholder */}
           </div>
         </div>
         {/* Event Calendar Section */}
