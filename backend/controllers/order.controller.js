@@ -97,20 +97,36 @@ exports.checkout = async (req, res) => {
   }
 };
 
+
+const Vendor = require('../models/vendor.model');
 exports.getOrdersForVendor = async (req, res) => {
   try {
-    const vendorId = req.user._id;
-    const orders = await Order.find({ vendorId }).sort({ createdAt: -1 });
+    // Find the Vendor document for this user
+    const vendorDoc = await Vendor.findOne({ userId: req.user._id });
+    if (!vendorDoc) return res.status(404).json({ error: 'Vendor profile not found' });
+    const orders = await Order.find({ vendorId: vendorDoc._id }).sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { status } = req.body;
+    let { status } = req.body;
+    // Normalize status to match backend enum
+    if (typeof status === 'string') {
+      status = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+      // Map common lowercase values to backend enum
+      if (status === 'Processing') status = 'Preparing';
+      if (status === 'Cancelled') status = 'Rejected';
+    }
+    const allowed = ['Pending', 'Accepted', 'Preparing', 'Ready', 'Completed', 'Rejected'];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status value' });
+    }
     const order = await Order.findOneAndUpdate({ orderId }, { orderStatus: status }, { new: true });
     if (!order) return res.status(404).json({ error: 'Order not found' });
     res.json(order);

@@ -9,6 +9,16 @@ exports.getOwnProfile = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// Public: Get vendor profile by vendorId (for user view)
+exports.getVendorProfileById = async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.params.vendorId).select('-__v');
+    if (!vendor) return res.status(404).json({ error: 'Vendor not found' });
+    res.json(vendor);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 exports.updateOwnProfile = async (req, res) => {
   try {

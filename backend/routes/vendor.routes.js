@@ -11,5 +11,7 @@ router.put('/me', authenticateVendor, upload.fields([
 	{ name: 'profileBanner', maxCount: 1 },
 	{ name: 'logo', maxCount: 1 }
 ]), vendorController.updateOwnProfile);
+// Public: Get vendor profile by vendorId (for user view)
+router.get('/:vendorId', vendorController.getVendorProfileById);
 
 module.exports = router;

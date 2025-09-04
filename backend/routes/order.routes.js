@@ -11,6 +11,7 @@ router.post('/checkout', authenticate, orderController.checkout);
 router.get('/vendor', authenticateVendor, orderController.getOrdersForVendor);
 // Vendor: update order status
 router.put('/vendor/:orderId/status', authenticateVendor, orderController.updateOrderStatus);
+router.patch('/vendor/:orderId/status', authenticateVendor, orderController.updateOrderStatus);
 
 // Tourist: get all their orders
 router.get('/user', authenticate, orderController.getOrdersForUser);
