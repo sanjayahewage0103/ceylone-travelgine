@@ -20,6 +20,8 @@ import VendorSalesDashboardPage from './pages/vendor/VendorSalesDashboardPage';
 import GuideAuthPage from './pages/guide/GuideAuthPage';
 import GuideRegisterSinglePage from './components/guide/GuideRegisterSinglePage';
 import GuideProfilePage from './pages/guide/GuideProfilePage';
+import TourPackageManager from './pages/TourPackageManager';
+import AllTours from './pages/AllTours';
 import VendorForecastingDashboard from './pages/vendor/VendorForecastingDashboard';
 import VendorAIForecastPage from './pages/vendor/VendorAIForecastPage';
 import DashboardPage from './pages/admin/DashboardPage';
@@ -58,11 +60,13 @@ function App() {
   <Route path="/vendor/ai-forecast" element={<VendorAIForecastPage />} />
       {/* <Route path="/vendor/register2" element={<RegisterVendor2 />} /> */}
       <Route path="/guide" element={<GuideAuthPage />} />
-      <Route path="/guide/register2" element={<GuideRegisterSinglePage />} />
+  <Route path="/guide/register2" element={<GuideRegisterSinglePage />} />
+  <Route path="/guide/tour-packages" element={<TourPackageManager />} />
       <Route path="/tourist/login" element={<TouristAuthPage />} />
       <Route path="/vendor/login" element={<VendorAuthPage />} />
   <Route path="/guide/login" element={<GuideRegisterSinglePage />} />
   <Route path="/guide/profile" element={<GuideProfilePage />} />
+      <Route path="/tours" element={<AllTours />} />
     </Routes>
   );
 }

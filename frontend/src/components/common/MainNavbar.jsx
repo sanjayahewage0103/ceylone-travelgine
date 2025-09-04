@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { FaBars, FaBell } from 'react-icons/fa';
 import logo from '/public/vite.svg'; // Replace with your actual logo path
 
+
 const MainNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/tours?search=${encodeURIComponent(search.trim())}`);
+      setSearch("");
+    }
+  };
 
   return (
     <nav className="bg-white shadow-md w-full z-20 top-0 left-0 border-b border-gray-200">
@@ -18,7 +30,20 @@ const MainNavbar = () => {
         {/* Center: Nav Links (hidden on mobile) */}
         <div className="hidden md:flex gap-6 items-center">
           <Link to="/explore-lanka" className="text-gray-700 hover:text-blue-700 font-medium">Explore Lanka</Link>
+          <Link to="/tours" className="text-gray-700 hover:text-blue-700 font-medium">Tours</Link>
           <Link to="/marketplace" className="text-gray-700 hover:text-blue-700 font-medium">Ceylone Marketplace</Link>
+          {/* Search bar */}
+          <form onSubmit={handleSearch} className="ml-4 flex items-center border rounded overflow-hidden bg-gray-100">
+            <input
+              type="text"
+              placeholder="Search tours..."
+              className="px-2 py-1 bg-gray-100 outline-none"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ minWidth: 160 }}
+            />
+            <button type="submit" className="px-2 text-blue-700 font-bold">🔍</button>
+          </form>
         </div>
         {/* Right: Notification, Dropdown, Menu Icon */}
         <div className="flex items-center gap-4">
@@ -58,6 +83,7 @@ const MainNavbar = () => {
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 px-4 pb-4">
           <Link to="/explore-lanka" className="block py-2 text-gray-700 hover:text-blue-700">Explore Lanka</Link>
+          <Link to="/tours" className="block py-2 text-gray-700 hover:text-blue-700">Tours</Link>
           <Link to="/marketplace" className="block py-2 text-gray-700 hover:text-blue-700">Ceylone Marketplace</Link>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}

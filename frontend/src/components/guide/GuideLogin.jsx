@@ -19,6 +19,9 @@ const GuideLogin = ({ onSwitchToRegister }) => {
       const result = await authService.login(email, password);
       if (result.token) {
         localStorage.setItem('token', result.token);
+        if (result.user && result.user.role === 'guide' && result.user.id) {
+          localStorage.setItem('guideId', result.user.id);
+        }
         console.log('JWT token:', result.token);
       }
       navigate('/guide/profile');
