@@ -18,4 +18,15 @@ router.get('/:vendorId', vendorController.getVendorProfileById);
 // Get products for the logged-in vendor
 router.get('/me/products', authenticateVendor, productController.getVendorProducts);
 
+// Public: Get all vendors (for dropdown selection)
+router.get('/', async (req, res) => {
+	try {
+		const Vendor = require('../models/vendor.model');
+		const vendors = await Vendor.find({}, 'shopName _id');
+		res.json(vendors);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
 module.exports = router;

@@ -25,7 +25,19 @@ const VendorSidebar = () => {
         >
           Sales Dashboard
         </Link>
-      </nav>
+      <Link
+        to="/vendor/forecast"
+        className={`block px-4 py-2 rounded ${pathname === '/vendor/forecast' ? 'bg-purple-700 font-bold' : 'hover:bg-purple-700'}`}
+      >
+        Forecast Demand
+      </Link>
+      <Link
+        to="/vendor/ai-forecast"
+        className={`block px-4 py-2 rounded ${pathname === '/vendor/ai-forecast' ? 'bg-purple-700 font-bold' : 'hover:bg-purple-700'}`}
+      >
+        AI Demand Forecast
+      </Link>
+    </nav>
     </aside>
   );
 };

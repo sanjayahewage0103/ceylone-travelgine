@@ -49,6 +49,7 @@ def get_forecast():
             'Avg_Rainfall_National': 170.0, 'month': date_obj.month, 'year': date_obj.year,
             'day': date_obj.day, 'dayofweek': date_obj.dayofweek, 'dayofyear': date_obj.dayofyear,
             'weekofyear': date_obj.isocalendar().week, 'quarter': date_obj.quarter,
+            # Simulate lag/rolling features
             'Units_Sold_lag_1': product.get('avg_sales', 50) * 1.2,
             'Units_Sold_lag_7': product.get('avg_sales', 50) * 1.1,
             'Units_Sold_rolling_mean_7': product.get('avg_sales', 50) * 1.05,
@@ -81,14 +82,14 @@ def get_forecast():
         product_forecasts.append({"productName": product['name'], "predictedUnits": pred_units, "expectedRevenue": revenue, "demandLevel": demand_level})
     product_forecasts.sort(key=lambda x: x['predictedUnits'], reverse=True)
 
-    ai_insights = [ f"High demand expected in {date_obj.strftime('%B')} due to peak tourist season.", "Focus on 'Handicrafts' and 'Food & Spices'." ]
-    inventory_recs = [f"Stock more '{product_forecasts[0]['productName']}'.", f"Reduce inventory for '{product_forecasts[-1]['productName']}'.", "Bundle 'Cinnamon Sticks' with 'Ceylon Tea'."]
+    ai_insights = [ f"High demand expected in {date_obj.strftime('%B')} due to peak tourist season.", "Focus on 'Handicrafts' and 'Food & Spices' as they are popular souvenir categories." ]
+    inventory_recs = [f"Stock more '{product_forecasts[0]['productName']}' - demand is expected to be high.", f"Reduce inventory for '{product_forecasts[-1]['productName']}' - low seasonal demand expected.", "Bundle popular items like 'Cinnamon Sticks' with 'Ceylon Tea' for gift packs." ]
 
     # --- 8. CONSTRUCT FINAL JSON RESPONSE ---
     response_payload = {
         "monthlyForecast": { "expectedRevenue": total_revenue, "confidence": "±12%" },
         "productForecasts": product_forecasts,
-        "touristInsights": { "totalTouristsSriLanka": "280,000", "touristsInDistrict": "35,000 in Colombo", "nationalityDemand": [{"country": "Germany", "insight": "High demand for masks"},{"country": "UK", "insight": "High demand for tea"}] },
+        "touristInsights": { "totalTouristsSriLanka": "280,000 (Projected)", "touristsInDistrict": "35,000 in Colombo (Projected)", "nationalityDemand": [{"country": "Germany", "insight": "High demand for masks"},{"country": "UK", "insight": "High demand for tea"}] },
         "aiGeneratedInsights": ai_insights,
         "inventoryRecommendations": inventory_recs
     }
