@@ -24,6 +24,7 @@
   "homepage": "https://github.com/sanjayahewage0103/ceylone-travelgine#readme",
   "dependencies": {
     "autoprefixer": "^10.4.21",
+    "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
     "bootstrap": "^5.3.8",
     "cors": "^2.8.5",

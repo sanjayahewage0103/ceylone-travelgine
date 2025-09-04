@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaShoppingCart } from 'react-icons/fa';
+import CartIcon from './CartIcon';
 const logo = '/marketplace-logo.png'; // Use public asset URL
 
 const MarketplaceNavbar = ({ search, setSearch, onSearch }) => (
@@ -32,9 +32,7 @@ const MarketplaceNavbar = ({ search, setSearch, onSearch }) => (
     </div>
     {/* Right: Cart Icon */}
     <div>
-      <Link to="/cart" className="text-gray-700 hover:text-green-700">
-        <FaShoppingCart size={22} />
-      </Link>
+      <CartIcon />
     </div>
   </nav>
 );

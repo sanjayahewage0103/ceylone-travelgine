@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Register from '../../components/tourist/Register';
 import TouristLogin from '../../components/tourist/TouristLogin';
 import authService from '../../services/authService';
@@ -8,15 +9,27 @@ const TouristAuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (email, password) => {
     setLoading(true);
     setError('');
     setSuccess('');
     try {
-      await authService.login(email, password);
+      const data = await authService.login(email, password);
       setSuccess('Login successful!');
-      // Optionally, redirect or save token here
+      // Store user id for cart and auth
+      if (data && data.user && data.user._id) {
+        localStorage.setItem('userId', data.user._id);
+      }
+      // Optionally store token if returned
+      if (data && data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      // Redirect to main home/dashboard
+      setTimeout(() => {
+        navigate('/');
+      }, 500);
     } catch (err) {
       setError(err.message);
     } finally {
