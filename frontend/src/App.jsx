@@ -9,6 +9,7 @@ import ShopListPage from './pages/marketplace/ShopListPage';
 import ProductDetailPage from './pages/marketplace/ProductDetailPage';
 import CheckoutPage from './pages/marketplace/CheckoutPage';
 import OrderConfirmationPage from './pages/marketplace/OrderConfirmationPage';
+import VendorShopProfilePage from './pages/marketplace/VendorShopProfilePage';
 import CartPage from './pages/marketplace/CartPage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import TouristAuthPage from './pages/tourist/TouristAuthPage';
@@ -32,6 +33,7 @@ function App() {
   <Route path="/marketplace/products" element={<ProductListPage />} />
   <Route path="/marketplace/product/:productId" element={<ProductDetailPage />} />
   <Route path="/marketplace/shops" element={<ShopListPage />} />
+  <Route path="/marketplace/vendor/:vendorId" element={<VendorShopProfilePage />} />
   <Route path="/cart" element={<CartPage />} />
   <Route path="/checkout" element={<CheckoutPage />} />
   <Route path="/order-confirmation" element={<OrderConfirmationPage />} />

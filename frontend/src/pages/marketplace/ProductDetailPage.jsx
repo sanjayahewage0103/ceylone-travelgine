@@ -49,6 +49,7 @@ const ProductDetailPage = () => {
 
   if (loading) return <div className="text-center py-20">Loading...</div>;
   if (error) return <div className="text-center text-red-500 py-20">{error}</div>;
+
   if (!product) return null;
 
   return (
@@ -56,6 +57,20 @@ const ProductDetailPage = () => {
       <MainNavbar />
       <MarketplaceNavbar />
       <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow p-6 flex flex-col md:flex-row gap-8">
+        {/* Vendor Shop Link */}
+        <div className="mb-4">
+          <span className="text-gray-600">Shop: </span>
+          {product.vendor && product.vendor._id ? (
+            <Link
+              to={`/marketplace/vendor/${product.vendor._id}`}
+              className="text-green-700 font-semibold hover:underline"
+            >
+              {product.vendor.shopName || 'View Shop'}
+            </Link>
+          ) : (
+            <span className="text-red-500 font-semibold">Unknown Shop</span>
+          )}
+        </div>
         {/* Left: Main Image */}
         <div className="flex-1 flex flex-col items-center">
           <img

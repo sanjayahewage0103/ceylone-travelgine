@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import MainNavbar from '../../components/common/MainNavbar';
 import MarketplaceNavbar from '../../components/marketplace/MarketplaceNavbar';
 
@@ -14,7 +15,16 @@ function ShopCard({ shop }) {
         alt={shop.shopName}
         className="h-20 w-20 object-cover rounded-full mb-2 border"
       />
-      <div className="font-bold text-lg text-green-800 mb-1">{shop.shopName}</div>
+      {shop.vendorId || shop._id ? (
+        <Link
+          to={`/marketplace/vendor/${shop.vendorId || shop._id}`}
+          className="font-bold text-lg text-green-800 mb-1 hover:underline hover:text-green-600"
+        >
+          {shop.shopName}
+        </Link>
+      ) : (
+        <span className="font-bold text-lg text-green-800 mb-1">{shop.shopName} <span className="text-xs text-red-500">(No vendorId)</span></span>
+      )}
       <div className="text-gray-500 text-sm mb-1">{shop.location}</div>
       <div className="text-gray-700 text-sm mb-2">
         {showFull || !isLong ? desc : desc.slice(0, maxDesc) + '...'}
