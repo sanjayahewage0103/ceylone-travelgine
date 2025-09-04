@@ -77,10 +77,12 @@ const VendorOrdersPage = () => {
                         onChange={e => handleStatusChange(order.orderId, e.target.value)}
                         className="border rounded px-2 py-1 text-xs"
                       >
-                        <option value="pending">Pending</option>
-                        <option value="processing">Processing</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Preparing">Preparing</option>
+                        <option value="Ready">Ready</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Rejected">Rejected</option>
                       </select>
                     </td>
                   </tr>

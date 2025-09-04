@@ -97,6 +97,10 @@ const GuideRegisterSinglePage = ({ onSwitchToLogin }) => {
         <label htmlFor="guide-agree-checkbox" className="ml-2 block text-sm text-gray-900">I have read and agree to the Ceylone Travelgine Guide Service Provider Agreement.</label>
       </div>
       <Button type="submit" fullWidth disabled={loading}>{loading ? 'Submitting...' : 'Complete Registration'}</Button>
+      <div className="text-center mt-4">
+        <span className="text-gray-700">Already have an account? </span>
+        <Link to="/guide/login" className="text-cyan-700 underline font-semibold">Login here</Link>
+      </div>
     </form>
   );
 };
