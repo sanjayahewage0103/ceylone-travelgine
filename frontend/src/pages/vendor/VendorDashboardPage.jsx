@@ -63,12 +63,18 @@ const VendorDashboardPage = () => {
   };
 
 
+  const refreshProducts = () => {
+    productService.getVendorProducts()
+      .then(setProducts)
+      .catch(() => {});
+  };
+
   const handleProductAdded = (product) => {
-    setProducts([product, ...products]);
+    refreshProducts();
   };
 
   const handleProductUpdated = (updated) => {
-    setProducts(products.map(p => p._id === updated._id ? updated : p));
+    refreshProducts();
   };
 
   if (loading) return <div className="p-8 text-center">Loading...</div>;

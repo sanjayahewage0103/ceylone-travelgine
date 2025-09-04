@@ -23,8 +23,13 @@ const VendorOrdersPage = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-  await orderService.updateOrderStatus(orderId, newStatus);
-  setOrders(orders => orders.map(o => o.orderId === orderId ? { ...o, orderStatus: newStatus } : o));
+      await orderService.updateOrderStatus(orderId, newStatus);
+      // Re-fetch orders to ensure status is up to date
+      setLoading(true);
+      orderService.getVendorOrders()
+        .then(setOrders)
+        .catch(() => setError('Failed to load orders.'))
+        .finally(() => setLoading(false));
     } catch {
       setError('Failed to update order status.');
     }
