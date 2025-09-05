@@ -44,9 +44,15 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 
 
+
 app.use('/api/blog-posts', blogPostRoutes);
 app.use('/api/tour-packages', tourPackageRoutes);
+const bookingRoutes = require('./routes/booking.routes');
+app.use('/api/bookings', bookingRoutes);
 
+// Register guide booking routes after all other routes, just before error handlers
+const guideBookingRoutes = require('./routes/guideBooking.routes');
+app.use('/api/guide', guideBookingRoutes);
 
 // Global error handler for uncaught exceptions and unhandled rejections
 process.on('uncaughtException', (err) => {
