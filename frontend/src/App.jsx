@@ -2,6 +2,7 @@ import GuideBlogs from './pages/GuideBlogs';
 import GuideBlogEditor from './pages/GuideBlogEditor';
 import BlogDetail from './pages/BlogDetail';
 import AllBlogs from './pages/AllBlogs';
+import ViewBlogPost from './pages/ViewBlogPost';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
@@ -45,6 +46,7 @@ function App() {
       <Route path="/guide/blogs/new" element={<GuideBlogEditor />} />
       <Route path="/guide/blogs/:id" element={<BlogDetail />} />
       <Route path="/guide/blogs/edit/:id" element={<GuideBlogEditor editMode={true} />} />
+    <Route path="/blogs/:id" element={<ViewBlogPost />} />
       <Route path="/admin/login" element={<AdminLoginPage />} />
       <Route path="/marketplace" element={<MarketplacePage />} />
       <Route path="/marketplace/products" element={<ProductListPage />} />

@@ -97,7 +97,7 @@ export default function AllBlogs() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {filtered.map(blog => (
-            <Link to={`/guide/blogs/${blog._id}`} key={blog._id} className="block">
+            <Link to={`/blogs/${blog._id}`} key={blog._id} className="block">
               <BlogCard blog={blog} />
             </Link>
           ))}

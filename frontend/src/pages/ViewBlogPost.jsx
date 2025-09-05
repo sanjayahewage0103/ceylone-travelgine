@@ -1,21 +1,18 @@
-
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getImageUrl } from '../utils/imageUrl';
 
-export default function BlogDetail() {
+export default function ViewBlogPost() {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  // Only show edit/delete if logged in as the author
-  const guideId = window.localStorage.getItem('guideId');
-  const isAuthor = blog?.author?._id && guideId && blog.author._id === guideId;
-  const token = window.localStorage.getItem('token');
   const [showFull, setShowFull] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [views, setViews] = useState(0);
+  const [likes, setLikes] = useState(0);
+  const [likeLoading, setLikeLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,8 +20,9 @@ export default function BlogDetail() {
       setLoading(true);
       try {
         const res = await axios.get(`/api/blog-posts/${id}`);
-        setBlog(res.data);
-        setViews(res.data.views || 0);
+  setBlog(res.data);
+  setViews(res.data.views || 0);
+  setLikes(res.data.likes || 0);
       } catch (err) {
         setError('Blog not found');
       }
@@ -33,31 +31,6 @@ export default function BlogDetail() {
     fetchBlog();
   }, [id]);
 
-  // Increment view count on full article open (if not already incremented)
-  useEffect(() => {
-    if (showFull && blog && blog._id && views === (blog.views || 0)) {
-      axios.patch(`/api/blog-posts/${blog._id}/view`).then(res => {
-        if (typeof res.data.views === 'number') setViews(res.data.views);
-      }).catch(() => {});
-    }
-    // eslint-disable-next-line
-  }, [showFull]);
-
-  async function handleDelete() {
-    if (!window.confirm('Delete this blog post?')) return;
-    try {
-      await axios.delete(`/api/blog-posts/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      navigate('/guide/blogs');
-    } catch (err) {
-      alert('Delete failed');
-    }
-  }
-
-
-
-  // Increment view count on full article open (if not already incremented)
   useEffect(() => {
     if (showFull && blog && blog._id && views === (blog.views || 0)) {
       axios.patch(`/api/blog-posts/${blog._id}/view`).then(res => {
@@ -71,10 +44,9 @@ export default function BlogDetail() {
   if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
   if (!blog) return null;
 
-  // Stats (placeholder, replace with real data if available)
-  const likes = blog.likes || Math.floor(Math.random() * 200 + 20);
   const duration = blog.duration || '6 Days';
   const authorName = blog.author?.name || 'Unknown Guide';
+  const publishedDate = blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : '';
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -90,10 +62,9 @@ export default function BlogDetail() {
             {blog.subtitle && <div className="text-cyan-700 font-medium mb-2 text-lg">{blog.subtitle}</div>}
             <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
               <span>By {authorName}</span>
-              <span>• {duration}</span>
+              <span>• Published: {publishedDate}</span>
               <span>• {views} Views</span>
               <span>• {likes} Likes</span>
-              <span>• {Math.ceil((new Date() - new Date(blog.createdAt)) / (1000*60*60*24))} Days Ago</span>
             </div>
           </div>
           <div className="flex gap-2 items-center">
@@ -105,12 +76,30 @@ export default function BlogDetail() {
                 setTimeout(() => setCopied(false), 1500);
               }}
             >{copied ? 'Copied!' : 'Copy Link'}</button>
-            {isAuthor && (
-              <>
-                <Link to={`/guide/blogs/edit/${blog._id}`} className="bg-cyan-100 text-cyan-800 px-3 py-1 rounded font-semibold text-xs">Edit</Link>
-                <button onClick={handleDelete} className="bg-red-100 text-red-700 px-3 py-1 rounded font-semibold text-xs">Delete</button>
-              </>
-            )}
+            <button
+              className={`text-xs px-2 py-1 rounded ${likeLoading ? 'bg-gray-200' : 'bg-cyan-100 hover:bg-cyan-200'} text-cyan-800 border border-cyan-200 font-semibold`}
+              disabled={likeLoading}
+              onClick={async () => {
+                setLikeLoading(true);
+                try {
+                  const res = await axios.patch(`/api/blog-posts/${blog._id}/like`);
+                  setLikes(res.data.likes);
+                } catch {}
+                setLikeLoading(false);
+              }}
+            >👍 Like</button>
+            <button
+              className={`text-xs px-2 py-1 rounded ${likeLoading ? 'bg-gray-200' : 'bg-red-100 hover:bg-red-200'} text-red-700 border border-red-200 font-semibold`}
+              disabled={likeLoading}
+              onClick={async () => {
+                setLikeLoading(true);
+                try {
+                  const res = await axios.patch(`/api/blog-posts/${blog._id}/dislike`);
+                  setLikes(res.data.likes);
+                } catch {}
+                setLikeLoading(false);
+              }}
+            >👎 Dislike</button>
           </div>
         </div>
         {blog.mainImage && (

@@ -15,6 +15,8 @@ const blogPostSchema = new mongoose.Schema({
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   tags: [{ type: String }],
   status: { type: String, enum: ['draft', 'published'], default: 'draft' },
+  views: { type: Number, default: 0 },
+  likes: { type: Number, default: 0 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('BlogPost', blogPostSchema);
