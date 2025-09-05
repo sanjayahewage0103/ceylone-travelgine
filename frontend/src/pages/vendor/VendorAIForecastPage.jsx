@@ -1,3 +1,5 @@
+import BusinessNavbar from '../../components/common/BusinessNavbar';
+import VendorSidebar from '../../components/vendor/VendorSidebar';
 import React, { useState, useMemo } from 'react';
 import Select from 'react-select';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -72,77 +74,87 @@ const VendorAIForecastPage = () => {
             }
             return acc;
         }, {});
-        
         return {
             labels: Object.keys(categoryRevenue),
-            datasets: [{ data: Object.values(categoryRevenue), backgroundColor: ['#14b8a6', '#f59e0b', '#3b82f6', '#8b5cf6'] }]
+            datasets: [
+                {
+                    label: 'Revenue',
+                    data: Object.values(categoryRevenue),
+                    backgroundColor: [
+                        '#38bdf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6', '#facc15', '#4ade80', '#818cf8', '#f59e42'
+                    ]
+                }
+            ]
         };
     }, [forecastData, selectedVendor]);
 
     return (
-        <div className="p-4 md:p-8 bg-gray-100 min-h-screen font-sans">
-            <div className="max-w-7xl mx-auto">
-                <header className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-800">AI Demand Forecast</h1>
-                    <p className="text-gray-500">Insights for {selectedVendor?.label || 'your store'}</p>
-                </header>
+        <>
+            <BusinessNavbar />
+            <div className="flex min-h-screen">
+                <VendorSidebar />
+                <div className="flex-1 p-4 md:p-8 bg-gray-100 font-sans">
+                    <header className="mb-8">
+                        <h1 className="text-3xl font-bold text-gray-800">AI Demand Forecast</h1>
+                        <p className="text-gray-500">Insights for {selectedVendor?.label || 'your store'}</p>
+                    </header>
 
-                <div className="bg-white p-6 rounded-xl shadow-md mb-8 border">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Select Your Store</label>
-                            <Select options={Object.keys(VENDORS_AND_PRODUCTS).map(id => ({ value: id, label: VENDORS_AND_PRODUCTS[id].name }))} defaultValue={selectedVendor} onChange={setSelectedVendor} />
+                    <div className="bg-white p-6 rounded-xl shadow-md mb-8 border">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Select Your Store</label>
+                                <Select options={Object.keys(VENDORS_AND_PRODUCTS).map(id => ({ value: id, label: VENDORS_AND_PRODUCTS[id].name }))} defaultValue={selectedVendor} onChange={setSelectedVendor} />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Select Products to Forecast</label>
+                                <Select options={productOptions} isMulti closeMenuOnSelect={false} onChange={setSelectedProducts} />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Forecast for Month</label>
+                                <input type="month" value={forecastDate} onChange={e => setForecastDate(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg h-[38px]" />
+                            </div>
                         </div>
-                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Select Products to Forecast</label>
-                            <Select options={productOptions} isMulti closeMenuOnSelect={false} onChange={setSelectedProducts} />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Forecast for Month</label>
-                            <input type="month" value={forecastDate} onChange={e => setForecastDate(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg h-[38px]" />
-                        </div>
+                        <button onClick={handleForecast} disabled={loading} className="mt-6 w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 disabled:bg-gray-400 flex items-center justify-center">
+                            <BarChart2 className="mr-2 h-5 w-5" /> {loading ? 'Running AI Models...' : 'Generate Forecast'}
+                        </button>
                     </div>
-                     <button onClick={handleForecast} disabled={loading} className="mt-6 w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 disabled:bg-gray-400 flex items-center justify-center">
-                        <BarChart2 className="mr-2 h-5 w-5" /> {loading ? 'Running AI Models...' : 'Generate Forecast'}
-                    </button>
+
+                    {error && <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-8">{error}</div>}
+                    {loading && <div className="text-center p-12">Loading...</div>}
+
+                    {forecastData && (
+                        <main className="flex-1 bg-gray-50 p-8">
+                            <section className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                                <KpiCard title="Est. Tourists (District)" value={forecastData.touristInsights.touristsInDistrict.split(' ')[0]} />
+                                <KpiCard title="Top Demand Driver" value="Tourism" />
+                            </section>
+                            <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <div className="lg:col-span-2 space-y-8">
+                                    <div className="bg-white p-6 rounded-xl shadow border">
+                                        <h3 className="text-lg font-bold text-gray-800 mb-4">Top Selling Products Forecast</h3>
+                                        <ProductTable products={forecastData.productForecasts} />
+                                    </div>
+                                    <div className="bg-white p-6 rounded-xl shadow border">
+                                        <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center"><Lightbulb className="text-yellow-500 mr-2" />Inventory Recommendations</h3>
+                                        <ul className="space-y-3 text-sm text-gray-700">{forecastData.inventoryRecommendations.map((rec, i) => <li key={i} className="flex items-start"><span className="mr-2">📌</span><span>{rec}</span></li>)}</ul>
+                                    </div>
+                                </div>
+                                <div className="lg:col-span-1 space-y-8">
+                                    <div className="bg-white p-6 rounded-xl shadow border">
+                                        <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center"><BrainCircuit className="text-blue-500 mr-2" />AI Generated Insights</h3>
+                                        <ul className="space-y-3 text-sm text-gray-700">{forecastData.aiGeneratedInsights.map((ins, i) => <li key={i}>- {ins}</li>)}</ul>
+                                    </div>
+                                    <div className="bg-white p-6 rounded-xl shadow border">
+                                        <h3 className="text-lg font-bold text-gray-800 mb-4">Revenue by Category</h3>
+                                        <Doughnut data={chartData} />
+                                    </div>
+                                </div>
+                            </section>
+                        </main>
+                    )}
                 </div>
-
-                {error && <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-8">{error}</div>}
-                {loading && <div className="text-center p-12">Loading...</div>}
-
-                {forecastData && (
-                    <main>
-                        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                            <KpiCard title="Projected Revenue" value={`LKR ${forecastData.monthlyForecast.expectedRevenue.toLocaleString()}`} />
-                            <KpiCard title="Est. Tourists (District)" value={forecastData.touristInsights.touristsInDistrict.split(' ')[0]} />
-                            <KpiCard title="Top Demand Driver" value="Tourism" />
-                        </section>
-                        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <div className="lg:col-span-2 space-y-8">
-                                <div className="bg-white p-6 rounded-xl shadow border">
-                                    <h3 className="text-lg font-bold text-gray-800 mb-4">Top Selling Products Forecast</h3>
-                                    <ProductTable products={forecastData.productForecasts} />
-                                </div>
-                                <div className="bg-white p-6 rounded-xl shadow border">
-                                    <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center"><Lightbulb className="text-yellow-500 mr-2" />Inventory Recommendations</h3>
-                                    <ul className="space-y-3 text-sm text-gray-700">{forecastData.inventoryRecommendations.map((rec, i) => <li key={i} className="flex items-start"><span className="mr-2">📌</span><span>{rec}</span></li>)}</ul>
-                                </div>
-                            </div>
-                            <div className="lg:col-span-1 space-y-8">
-                                <div className="bg-white p-6 rounded-xl shadow border">
-                                    <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center"><BrainCircuit className="text-blue-500 mr-2" />AI Generated Insights</h3>
-                                    <ul className="space-y-3 text-sm text-gray-700">{forecastData.aiGeneratedInsights.map((ins, i) => <li key={i}>- {ins}</li>)}</ul>
-                                </div>
-                                 <div className="bg-white p-6 rounded-xl shadow border">
-                                    <h3 className="text-lg font-bold text-gray-800 mb-4">Revenue by Category</h3>
-                                    <Doughnut data={chartData} />
-                                </div>
-                            </div>
-                        </section>
-                    </main>
-                )}
             </div>
-        </div>
+        </>
     );
 };
 

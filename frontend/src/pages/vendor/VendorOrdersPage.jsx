@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import VendorSidebar from '../../components/vendor/VendorSidebar';
+import BusinessNavbar from '../../components/common/BusinessNavbar';
 import orderService from '../../services/orderService';
 
 const statusColors = {
@@ -64,9 +65,11 @@ const VendorOrdersPage = () => {
   const handleViewDetails = (order) => setSelectedOrder(order);
 
   return (
-    <div className="flex min-h-screen">
-      <VendorSidebar />
-      <main className="flex-1 bg-gray-50 p-8">
+    <>
+      <BusinessNavbar />
+      <div className="flex min-h-screen">
+        <VendorSidebar />
+        <main className="flex-1 bg-gray-50 p-8">
         <h1 className="text-2xl font-bold mb-6">Order Management</h1>
         {loading ? <div>Loading...</div> : error ? <div className="text-red-500">{error}</div> : (
           <div className="overflow-x-auto">
@@ -126,8 +129,9 @@ const VendorOrdersPage = () => {
         {selectedOrder && (
           <OrderDetailModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />
         )}
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 };
 

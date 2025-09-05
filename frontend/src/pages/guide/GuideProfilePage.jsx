@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BusinessNavbar from '../../components/common/BusinessNavbar';
 import GuideSidebar from '../../components/guide/GuideSidebar';
 import guideService from '../../services/guideService';
 import Modal from 'react-modal';
@@ -187,9 +188,11 @@ const GuideProfilePage = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#1a2236]">
-      <GuideSidebar />
-      <main className="flex-1 p-8">
+    <>
+      <BusinessNavbar />
+      <div className="flex min-h-screen bg-[#1a2236]">
+        <GuideSidebar />
+        <main className="flex-1 p-8">
         {/* Banner */}
         <BannerUploader
           imageUrl={getImageUrl(guideProfile.files?.profileBanner)}
@@ -346,8 +349,9 @@ const GuideProfilePage = () => {
             </tbody>
           </table>
         </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }
 

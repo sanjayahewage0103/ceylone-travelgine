@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import BusinessNavbar from '../../components/common/BusinessNavbar';
 
 function VendorForecastingDashboard() {
   const [jwtToken, setJwtToken] = useState('');
@@ -61,8 +62,10 @@ function VendorForecastingDashboard() {
   };
 
   return (
-    <div>
-      <h1>Vendor Forecast Dashboard</h1>
+    <>
+      <BusinessNavbar />
+      <div>
+        <h1>Vendor Forecast Dashboard</h1>
       <div style={{ marginBottom: 16 }}>
         <strong>JWT Token:</strong> {jwtToken ? jwtToken : <span style={{color:'red'}}>Not found</span>}
       </div>
@@ -130,7 +133,8 @@ function VendorForecastingDashboard() {
       ) : forecasts ? (
         <div style={{ marginTop: 32, color: 'red' }}>No forecast results found.</div>
       ) : null}
-    </div>
+      </div>
+    </>
   );
 }
 

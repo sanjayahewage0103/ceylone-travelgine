@@ -1,3 +1,4 @@
+import BusinessNavbar from '../../components/common/BusinessNavbar';
 import React, { useEffect, useState } from 'react';
 import VendorSidebar from '../../components/vendor/VendorSidebar';
 import VendorProfileHeader from '../../components/vendor/VendorProfileHeader';
@@ -81,9 +82,11 @@ const VendorDashboardPage = () => {
   if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
 
   return (
-    <div className="flex min-h-screen">
-      <VendorSidebar />
-      <main className="flex-1 bg-gray-50 p-8">
+    <>
+      <BusinessNavbar />
+      <div className="flex min-h-screen">
+        <VendorSidebar />
+        <main className="flex-1 bg-gray-50 p-8">
         <VendorProfileHeader vendor={vendor} onEdit={() => setEditMode(true)} />
         <VendorProfileDetails 
           vendor={vendor} 
@@ -104,8 +107,9 @@ const VendorDashboardPage = () => {
         </div>
   <ProductModal open={productModalOpen} onClose={() => setProductModalOpen(false)} onProductAdded={handleProductAdded} />
   <EditProductModal open={!!editProduct} onClose={() => setEditProduct(null)} product={editProduct || {}} onProductUpdated={handleProductUpdated} />
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 };
 

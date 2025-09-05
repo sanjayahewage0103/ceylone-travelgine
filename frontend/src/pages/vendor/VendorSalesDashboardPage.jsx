@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import VendorSidebar from '../../components/vendor/VendorSidebar';
+import BusinessNavbar from '../../components/common/BusinessNavbar';
 import orderService from '../../services/orderService';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import {
@@ -76,9 +77,11 @@ const VendorSalesDashboardPage = () => {
   const categoryRevenue = categoryLabels.map(c => categoryGroups[c]);
 
   return (
-    <div className="flex min-h-screen">
-      <VendorSidebar />
-      <main className="flex-1 bg-gray-50 p-8">
+    <>
+      <BusinessNavbar />
+      <div className="flex min-h-screen">
+        <VendorSidebar />
+        <main className="flex-1 bg-gray-50 p-8">
         <h1 className="text-2xl font-bold mb-6">Sales Analytics Dashboard</h1>
         {loading ? <div>Loading...</div> : error ? <div className="text-red-500">{error}</div> : (
           <>
@@ -158,8 +161,9 @@ const VendorSalesDashboardPage = () => {
             </div>
           </>
         )}
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 };
 
