@@ -36,6 +36,9 @@ import PendingProductsPage from './pages/admin/PendingProductsPage';
 import ManageProductsPage from './pages/admin/ManageProductsPage';
 import AdminLayout from './layouts/AdminLayout';
 
+import GuideManageBookings from './pages/GuideManageBookings';
+import GuideCalendarNotes from './pages/GuideCalendarNotes';
+
 
 function App() {
   return (
@@ -80,6 +83,8 @@ function App() {
       <Route path="/guide/profile" element={<GuideProfilePage />} />
       <Route path="/tours" element={<AllTours />} />
       <Route path="/tours/:id" element={<TourPackageDetail />} />
+  <Route path="/guide/manage-bookings" element={<GuideManageBookings />} />
+  <Route path="/guide/calendar-notes" element={<GuideCalendarNotes />} />
     </Routes>
   );
 }

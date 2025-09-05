@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import tourPackageService from '../services/tourPackageService';
+import BookTourModal from '../components/BookTourModal';
+import bookingService from '../services/bookingService';
 
 function ImageSlider({ images = [] }) {
   const [idx, setIdx] = useState(0);
   if (!images.length) return <div className="bg-gray-200 h-56 w-full rounded" />;
+  const getImageUrl = (img) => {
+    if (img?.startsWith('/uploads')) {
+      return `http://localhost:5000${img}`;
+    }
+    return img;
+  };
   return (
     <div className="relative w-full h-56 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
-      <img src={images[idx]} alt="Tour" className="object-cover w-full h-full" />
+      <img src={getImageUrl(images[idx])} alt="Tour" className="object-cover w-full h-full" />
       {images.length > 1 && (
         <>
           <button onClick={() => setIdx((idx - 1 + images.length) % images.length)} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 rounded-full px-2 py-1">‹</button>
@@ -52,6 +60,8 @@ export default function TourPackageDetail() {
   const { id } = useParams();
   const [pkg, setPkg] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showBook, setShowBook] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     async function fetchPkg() {
@@ -65,13 +75,28 @@ export default function TourPackageDetail() {
       setLoading(false);
     }
     fetchPkg();
+    // Get user from localStorage if available
+    try {
+      const u = JSON.parse(localStorage.getItem('user'));
+      setUser(u);
+    } catch {}
   }, [id]);
+
+  const handleBook = async (form) => {
+    const token = localStorage.getItem('token');
+    await bookingService.createBooking({
+      ...form,
+      tourPackage: pkg._id,
+    }, token);
+    alert('Booking successful!');
+  };
 
   if (loading) return <div className="text-center py-20 text-gray-500">Loading...</div>;
   if (!pkg) return <div className="text-center py-20 text-red-500">Tour not found.</div>;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      <BookTourModal open={showBook} onClose={() => setShowBook(false)} onBook={handleBook} pkg={pkg} user={user} />
       {/* Top: Images, Title, Price, Book Button */}
       <div className="flex flex-col md:flex-row gap-6 mb-8">
         <div className="md:w-1/2">
@@ -91,7 +116,7 @@ export default function TourPackageDetail() {
             <div className="text-sm text-gray-500 mb-2">Languages: {pkg.languages?.join(', ')}</div>
             <div className="text-sm text-gray-500 mb-2">Inclusions: {pkg.inclusions?.join(', ')}</div>
           </div>
-          <button className="bg-blue-700 text-white px-6 py-2 rounded text-lg font-semibold mt-4 w-full md:w-auto">Book Tour</button>
+          <button className="bg-blue-700 text-white px-6 py-2 rounded text-lg font-semibold mt-4 w-full md:w-auto" onClick={() => setShowBook(true)}>Book Tour</button>
         </div>
       </div>
       {/* Quick Itinerary */}
