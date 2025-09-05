@@ -46,6 +46,8 @@ export default function ViewBlogPost() {
 
   const duration = blog.duration || '6 Days';
   const authorName = blog.author?.name || 'Unknown Guide';
+  const authorId = blog.author?._id;
+  const authorProfilePic = blog.author?.profilePicture || '/default-profile.png';
   const publishedDate = blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : '';
 
   return (
@@ -61,7 +63,12 @@ export default function ViewBlogPost() {
             <h1 className="text-2xl md:text-3xl font-bold text-cyan-900 mb-1">{blog.title}</h1>
             {blog.subtitle && <div className="text-cyan-700 font-medium mb-2 text-lg">{blog.subtitle}</div>}
             <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
-              <span>By {authorName}</span>
+              <span className="flex items-center gap-1">
+                <a href={authorId ? `/guides/${authorId}` : '#'} className="flex items-center group">
+                  <img src={authorProfilePic} alt="Guide" className="w-5 h-5 rounded-full border border-gray-300 mr-1" />
+                  <span className="text-cyan-700 group-hover:underline font-semibold">{authorName}</span>
+                </a>
+              </span>
               <span>• Published: {publishedDate}</span>
               <span>• {views} Views</span>
               <span>• {likes} Likes</span>

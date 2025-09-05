@@ -24,13 +24,51 @@ class BlogPostService {
     return await post.save();
   }
   async getBlogPostById(id) {
-    return await BlogPost.findById(id).populate('author', 'name');
+    const post = await BlogPost.findById(id).populate('author', 'fullName role');
+    if (!post) return null;
+    let author = post.author;
+    let profilePicUrl = null;
+    if (author && author.role === 'guide') {
+      // Lazy load Guide model to avoid circular deps
+      const Guide = require('../models/guide.model');
+      const guideProfile = await Guide.findOne({ userId: author._id });
+      if (guideProfile && guideProfile.files && guideProfile.files.profilePicUrl) {
+        profilePicUrl = guideProfile.files.profilePicUrl;
+      }
+    }
+    // Compose author object
+    post.author = {
+      _id: author?._id,
+      name: author?.fullName,
+      profilePicture: profilePicUrl,
+      role: author?.role
+    };
+    return post;
   }
   async getBlogPostsByGuide(guideId) {
     return await BlogPost.find({ author: guideId }).sort({ createdAt: -1 });
   }
   async getAllPublishedBlogPosts() {
-    return await BlogPost.find({ status: 'published' }).sort({ createdAt: -1 });
+    const posts = await BlogPost.find({ status: 'published' }).sort({ createdAt: -1 }).populate('author', 'fullName role');
+    // For each post, attach author name and profilePic
+    const Guide = require('../models/guide.model');
+    return await Promise.all(posts.map(async post => {
+      let author = post.author;
+      let profilePicUrl = null;
+      if (author && author.role === 'guide') {
+        const guideProfile = await Guide.findOne({ userId: author._id });
+        if (guideProfile && guideProfile.files && guideProfile.files.profilePicUrl) {
+          profilePicUrl = guideProfile.files.profilePicUrl;
+        }
+      }
+      post.author = {
+        _id: author?._id,
+        name: author?.fullName,
+        profilePicture: profilePicUrl,
+        role: author?.role
+      };
+      return post;
+    }));
   }
   async updateBlogPost(id, data) {
     return await BlogPost.findByIdAndUpdate(id, data, { new: true });

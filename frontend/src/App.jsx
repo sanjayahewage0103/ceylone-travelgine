@@ -1,3 +1,5 @@
+import GuideProfile from './pages/GuideProfile.jsx';
+import TouristForecast from './components/guide/TouristForecast';
 import GuideBlogs from './pages/GuideBlogs';
 import GuideBlogEditor from './pages/GuideBlogEditor';
 import BlogDetail from './pages/BlogDetail';
@@ -85,6 +87,9 @@ function App() {
       <Route path="/tours/:id" element={<TourPackageDetail />} />
   <Route path="/guide/manage-bookings" element={<GuideManageBookings />} />
   <Route path="/guide/calendar-notes" element={<GuideCalendarNotes />} />
+  <Route path="/guide/tourist-forecast" element={<TouristForecast />} />
+  {/* Public guide profile/portfolio */}
+  <Route path="/guides/:id" element={<GuideProfile />} />
     </Routes>
   );
 }
