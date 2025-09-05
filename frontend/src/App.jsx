@@ -1,3 +1,4 @@
+import TouristOrdersPage from './pages/tourist/TouristOrdersPage';
 import GuideProfile from './pages/GuideProfile.jsx';
 import TouristForecast from './components/guide/TouristForecast';
 import GuideBlogs from './pages/GuideBlogs';
@@ -88,6 +89,8 @@ function App() {
   <Route path="/guide/manage-bookings" element={<GuideManageBookings />} />
   <Route path="/guide/calendar-notes" element={<GuideCalendarNotes />} />
   <Route path="/guide/tourist-forecast" element={<TouristForecast />} />
+  {/* Tourist personal orders */}
+  <Route path="/tourist/my-orders" element={<TouristOrdersPage />} />
   {/* Public guide profile/portfolio */}
   <Route path="/guides/:id" element={<GuideProfile />} />
     </Routes>

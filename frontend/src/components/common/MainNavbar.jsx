@@ -96,7 +96,7 @@ const MainNavbar = () => {
                   <Link to="/tourist/my-tours" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>View My Tours</Link>
                   <Link to="/tourist/plan-trip" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>Plan Trip with AI</Link>
                   <Link to="/tourist/cart" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>View My Cart</Link>
-                  <Link to="/tourist/orders" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>View My Orders</Link>
+                  <Link to="/tourist/my-orders" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>View My Orders</Link>
                   <Link to="/ceylon-lence" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>Ceylon Lence</Link>
                   <Link to="/tourist/settings" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>Settings</Link>
                   <button className="py-2 text-red-600 hover:text-white hover:bg-red-500 font-medium rounded transition" onClick={handleLogout}>Logout</button>
