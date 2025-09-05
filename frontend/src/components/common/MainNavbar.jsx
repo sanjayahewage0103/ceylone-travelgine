@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { FaBars, FaBell } from 'react-icons/fa';
+import { FaBars, FaBell, FaUserCircle } from 'react-icons/fa';
 import logo from '/public/vite.svg'; // Replace with your actual logo path
 
 
@@ -53,13 +53,14 @@ const MainNavbar = () => {
             {/* Notification dot (optional) */}
             {/* <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span> */}
           </button>
-          {/* Dropdown for Login/Register */}
+          {/* User icon (placeholder) for login/register */}
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="text-gray-700 hover:text-blue-700 font-medium focus:outline-none"
+              className="focus:outline-none flex items-center justify-center"
+              aria-label="User menu"
             >
-              Login / Register
+              <FaUserCircle size={30} className="text-gray-400 hover:text-blue-700" />
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-30">

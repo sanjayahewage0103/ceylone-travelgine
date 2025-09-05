@@ -10,31 +10,7 @@ Modal.setAppElement('#root');
 
 
 
-const keyInsights = [
-  { label: 'Total Trips', value: 124 },
-  { label: 'Total Income (YTD)', value: '$21,750', highlight: true },
-  { label: 'Upcoming Bookings', value: 7 },
-  { label: 'Forecast (This Month)', value: 'High Demand', highlight: true },
-  { label: '28°C', value: 'Colombo, 4 Sep', weather: true },
-];
 
-const revenueData = [
-  { month: 'Mar', value: 2500 },
-  { month: 'Apr', value: 3200 },
-  { month: 'May', value: 3100 },
-  { month: 'Jun', value: 4100 },
-  { month: 'Jul', value: 4800 },
-  { month: 'Aug', value: 5000 },
-];
-
-const eventCalendar = [
-  { date: 'SEP 15', name: 'Kandy Esala Perahera', note: 'High demand expected' },
-  { date: 'DEC 25', name: 'Christmas Day', note: 'Peak tourist season' },
-];
-
-const bookingRequests = [
-  { tourist: 'John Doe', package: 'Kandy Cultural Tour', date: 'Sep 20, 2025', pax: '2 Adults' },
-];
 
 
 const GuideProfilePage = () => {
@@ -70,6 +46,9 @@ const GuideProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [analytics, setAnalytics] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
+  const [analyticsError, setAnalyticsError] = useState('');
   const navigate = useNavigate();
   const [editOpen, setEditOpen] = useState(false);
   const [editData, setEditData] = useState(null);
@@ -80,9 +59,11 @@ const GuideProfilePage = () => {
   const [bannerFile, setBannerFile] = useState(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileAndAnalytics = async () => {
       setLoading(true);
       setError('');
+      setAnalyticsLoading(true);
+      setAnalyticsError('');
       const token = localStorage.getItem('token');
       if (!token) {
         navigate('/guide');
@@ -91,6 +72,16 @@ const GuideProfilePage = () => {
       try {
         const data = await guideService.getProfile(token);
         setProfile(data);
+        // Fetch analytics for this guide
+        const guideId = data._id || data.id;
+        if (guideId) {
+          const res = await fetch(`/api/guides/${guideId}/analytics`);
+          if (!res.ok) throw new Error('Failed to fetch analytics');
+          const analyticsData = await res.json();
+          setAnalytics(analyticsData);
+        } else {
+          setAnalyticsError('Guide ID not found');
+        }
       } catch (err) {
         if (err.message === 'Not authenticated' || err.message === 'jwt expired' || err.message === 'jwt malformed') {
           localStorage.removeItem('token');
@@ -100,9 +91,10 @@ const GuideProfilePage = () => {
         }
       } finally {
         setLoading(false);
+        setAnalyticsLoading(false);
       }
     };
-    fetchProfile();
+    fetchProfileAndAnalytics();
   }, [navigate]);
 
   const handleEditClick = () => {
@@ -151,24 +143,48 @@ const GuideProfilePage = () => {
   const guideProfile = profile.guideProfile;
   const user = profile;
 
-  // Example revenue data (replace with real data as needed)
-  const revenueData = guideProfile.revenueData || [
-    { month: 'Mar', value: 2500 },
-    { month: 'Apr', value: 3200 },
-    { month: 'May', value: 3100 },
-    { month: 'Jun', value: 4100 },
-    { month: 'Jul', value: 4800 },
-    { month: 'Aug', value: 5000 },
+
+  // Build key insights from analytics
+  let keyInsights = [
+    { label: 'Total Trips', value: analytics?.completedTrips ?? '-' },
+    { label: 'Total Income (YTD)', value: analytics?.totalRevenue ? `LKR ${analytics.totalRevenue.toLocaleString()}` : '-', highlight: true },
+    { label: 'Upcoming Bookings', value: analytics?.upcomingCount ?? '-' },
+    { label: 'Next Booking', value: analytics?.nextBooking ? new Date(analytics.nextBooking.date).toLocaleDateString() : '-', highlight: true },
+    { label: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), value: 'Today', weather: true },
   ];
 
-  const eventCalendar = guideProfile.eventCalendar || [
-    { date: 'SEP 15', name: 'Kandy Esala Perahera', note: 'High demand expected' },
-    { date: 'DEC 25', name: 'Christmas Day', note: 'Peak tourist season' },
-  ];
+  // Revenue chart data
+  let revenueData = [];
+  if (analytics?.monthlyRevenue) {
+    // monthlyRevenue: [{_id: {year, month}, total}]
+    revenueData = analytics.monthlyRevenue.map(m => ({
+      month: `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m._id.month-1]}`,
+      value: m.total
+    }));
+  }
 
-  const bookingRequests = guideProfile.bookingRequests || [
-    { tourist: 'John Doe', package: 'Kandy Cultural Tour', date: 'Sep 20, 2025', pax: '2 Adults' },
-  ];
+  // Event calendar: show all bookings (date, tourist, package)
+  let eventCalendar = [];
+  if (analytics?.eventCalendar) {
+    eventCalendar = analytics.eventCalendar.slice(-6).map(b => ({
+      date: new Date(b.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      name: b.touristName || b.tourist || 'Tourist',
+      note: b.tourPackageName || b.package || '',
+    }));
+  }
+
+  // Pending booking requests (show up to 3, +more if available)
+  let bookingRequests = [];
+  let morePending = 0;
+  if (analytics?.pendingBookings) {
+    bookingRequests = analytics.pendingBookings.slice(0,3).map(b => ({
+      tourist: b.touristName || b.tourist || 'Tourist',
+      package: b.tourPackageName || b.package || '',
+      date: new Date(b.date).toLocaleDateString(),
+      pax: b.pax || b.guests || '',
+    }));
+    morePending = analytics.pendingBookings.length - 3;
+  }
 
   return (
     <div className="flex min-h-screen bg-[#1a2236]">
@@ -247,36 +263,50 @@ const GuideProfilePage = () => {
         </div>
         {/* Key Insights */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          {keyInsights.map((insight, i) => (
-            <div key={i} className={`rounded-xl p-4 shadow text-center ${insight.highlight ? 'bg-[#222e50] text-cyan-300 font-bold' : 'bg-[#222e50] text-white'} ${insight.weather ? 'flex flex-col justify-center items-center' : ''}`}>
-              <div className="text-lg font-semibold">{insight.label}</div>
-              <div className="text-2xl mt-2">{insight.value}</div>
-            </div>
-          ))}
+          {analyticsLoading ? (
+            <div className="col-span-5 text-center text-white">Loading analytics...</div>
+          ) : analyticsError ? (
+            <div className="col-span-5 text-center text-red-400">{analyticsError}</div>
+          ) : (
+            keyInsights.map((insight, i) => (
+              <div key={i} className={`rounded-xl p-4 shadow text-center ${insight.highlight ? 'bg-[#222e50] text-cyan-300 font-bold' : 'bg-[#222e50] text-white'} ${insight.weather ? 'flex flex-col justify-center items-center' : ''}`}>
+                <div className="text-lg font-semibold">{insight.label}</div>
+                <div className="text-2xl mt-2">{insight.value}</div>
+              </div>
+            ))
+          )}
         </div>
         {/* Revenue Chart & Event Calendar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="md:col-span-2 bg-[#222e50] rounded-xl p-6 shadow">
             <h3 className="text-lg font-bold text-white mb-4">Last 6 Months Revenue</h3>
             <div className="w-full h-48 flex items-end gap-4">
-              {revenueData.map((d, i) => (
-                <div key={i} className="flex flex-col items-center justify-end h-full">
-                  <div className="w-10 bg-cyan-400 rounded-t" style={{ height: `${d.value / 60}px` }}></div>
-                  <div className="text-xs text-gray-300 mt-2">{d.month}</div>
-                </div>
-              ))}
+              {revenueData.length === 0 ? (
+                <div className="text-white">No revenue data</div>
+              ) : (
+                revenueData.map((d, i) => (
+                  <div key={i} className="flex flex-col items-center justify-end h-full">
+                    <div className="w-10 bg-cyan-400 rounded-t" style={{ height: `${d.value / 60}px` }}></div>
+                    <div className="text-xs text-gray-300 mt-2">{d.month}</div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
           <div className="bg-[#222e50] rounded-xl p-6 shadow">
             <h3 className="text-lg font-bold text-white mb-4">Event Calendar</h3>
             <ul className="space-y-3">
-              {eventCalendar.map((event, i) => (
-                <li key={i} className="bg-[#1a2236] rounded p-3 text-white flex flex-col">
-                  <span className="font-bold text-cyan-300">{event.date}</span>
-                  <span>{event.name}</span>
-                  <span className="text-xs text-gray-400">{event.note}</span>
-                </li>
-              ))}
+              {eventCalendar.length === 0 ? (
+                <li className="text-white">No events</li>
+              ) : (
+                eventCalendar.map((event, i) => (
+                  <li key={i} className="bg-[#1a2236] rounded p-3 text-white flex flex-col">
+                    <span className="font-bold text-cyan-300">{event.date}</span>
+                    <span>{event.name}</span>
+                    <span className="text-xs text-gray-400">{event.note}</span>
+                  </li>
+                ))
+              )}
             </ul>
           </div>
         </div>
@@ -294,18 +324,25 @@ const GuideProfilePage = () => {
               </tr>
             </thead>
             <tbody>
-              {bookingRequests.map((req, i) => (
-                <tr key={i} className="border-b border-gray-700">
-                  <td className="px-4 py-2">{req.tourist}</td>
-                  <td className="px-4 py-2">{req.package}</td>
-                  <td className="px-4 py-2">{req.date}</td>
-                  <td className="px-4 py-2">{req.pax}</td>
-                  <td className="px-4 py-2">
-                    <button className="bg-green-500 text-white px-3 py-1 rounded mr-2">Approve</button>
-                    <button className="bg-red-500 text-white px-3 py-1 rounded">Decline</button>
-                  </td>
-                </tr>
-              ))}
+              {bookingRequests.length === 0 ? (
+                <tr><td colSpan="5" className="text-center text-white">No pending requests</td></tr>
+              ) : (
+                bookingRequests.map((req, i) => (
+                  <tr key={i} className="border-b border-gray-700">
+                    <td className="px-4 py-2">{req.tourist}</td>
+                    <td className="px-4 py-2">{req.package}</td>
+                    <td className="px-4 py-2">{req.date}</td>
+                    <td className="px-4 py-2">{req.pax}</td>
+                    <td className="px-4 py-2">
+                      <button className="bg-green-500 text-white px-3 py-1 rounded mr-2">Approve</button>
+                      <button className="bg-red-500 text-white px-3 py-1 rounded">Decline</button>
+                    </td>
+                  </tr>
+                ))
+              )}
+              {morePending > 0 && (
+                <tr><td colSpan="5" className="text-center text-cyan-300">+{morePending} more pending requests</td></tr>
+              )}
             </tbody>
           </table>
         </div>
