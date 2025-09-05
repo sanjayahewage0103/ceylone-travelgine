@@ -18,7 +18,8 @@ const GuideSidebar = () => {
         <Link to="/guide/events" className="text-gray-700 hover:text-cyan-700 font-medium">Events</Link>
         <Link to="/guide/calendar" className="text-gray-700 hover:text-cyan-700 font-medium">Calendar</Link>
         <Link to="/guide/settings" className="text-gray-700 hover:text-cyan-700 font-medium">Settings</Link>
-  <Link to="/guide/tour-packages" className="text-gray-700 hover:text-cyan-700 font-medium">Manage Tour Packages</Link>
+        <Link to="/guide/tour-packages" className="text-gray-700 hover:text-cyan-700 font-medium">Manage Tour Packages</Link>
+  <Link to="/guide/blogs" className="text-gray-700 hover:text-cyan-700 font-medium">My Blogs</Link>
       </nav>
       <div className="mt-auto pt-8">
         <Link to="/" className="text-cyan-700 underline font-semibold">Home</Link>

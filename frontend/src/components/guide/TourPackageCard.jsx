@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const TourPackageCard = ({ pkg, onClick }) => {
+  const navigate = useNavigate();
   let mainImage = '/placeholder.jpg';
   if (pkg.images && pkg.images.length > 0) {
     mainImage = pkg.images[0];
@@ -23,7 +25,7 @@ const TourPackageCard = ({ pkg, onClick }) => {
     }
   }
   return (
-    <div className="bg-white rounded-xl shadow hover:shadow-lg transition cursor-pointer overflow-hidden border" onClick={onClick}>
+    <div className="bg-white rounded-xl shadow hover:shadow-lg transition cursor-pointer overflow-hidden border" onClick={() => onClick ? onClick() : navigate(`/tours/${pkg._id}`)}>
       <div className="relative h-48 w-full overflow-hidden">
         <img src={mainImage} alt={pkg.package_name} className="object-cover w-full h-full" />
         {/* Status badge */}

@@ -32,6 +32,7 @@ const MainNavbar = () => {
           <Link to="/explore-lanka" className="text-gray-700 hover:text-blue-700 font-medium">Explore Lanka</Link>
           <Link to="/tours" className="text-gray-700 hover:text-blue-700 font-medium">Tours</Link>
           <Link to="/marketplace" className="text-gray-700 hover:text-blue-700 font-medium">Ceylone Marketplace</Link>
+          <Link to="/blogs" className="text-gray-700 hover:text-blue-700 font-medium">Blogs</Link>
           {/* Search bar */}
           <form onSubmit={handleSearch} className="ml-4 flex items-center border rounded overflow-hidden bg-gray-100">
             <input
@@ -85,6 +86,7 @@ const MainNavbar = () => {
           <Link to="/explore-lanka" className="block py-2 text-gray-700 hover:text-blue-700">Explore Lanka</Link>
           <Link to="/tours" className="block py-2 text-gray-700 hover:text-blue-700">Tours</Link>
           <Link to="/marketplace" className="block py-2 text-gray-700 hover:text-blue-700">Ceylone Marketplace</Link>
+          <Link to="/blogs" className="block py-2 text-gray-700 hover:text-blue-700">Blogs</Link>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="block w-full text-left py-2 text-gray-700 hover:text-blue-700"
