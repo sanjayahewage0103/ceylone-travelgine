@@ -43,6 +43,7 @@ import AdminLayout from './layouts/AdminLayout';
 
 import GuideManageBookings from './pages/GuideManageBookings';
 import GuideCalendarNotes from './pages/GuideCalendarNotes';
+import SmartItineraryDashboard from './pages/trip/SmartItineraryDashboard';
 
 
 function App() {
@@ -98,6 +99,7 @@ function App() {
   <Route path="/tourist/my-tours" element={<TouristMyToursPage />} />
   {/* Public guide profile/portfolio */}
   <Route path="/guides/:id" element={<GuideProfile />} />
+  <Route path="/smart-itinerary" element={<SmartItineraryDashboard />} />
     </Routes>
   );
 }

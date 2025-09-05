@@ -95,6 +95,7 @@ const MainNavbar = () => {
                 <div className="flex flex-col gap-2 px-6 mt-2">
                   <Link to="/tourist/my-tours" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>View My Tours</Link>
                   <Link to="/tourist/plan-trip" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>Plan Trip with AI</Link>
+                  <Link to="/smart-itinerary" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>Smart Itinerary Planner</Link>
                   <Link to="/tourist/cart" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>View My Cart</Link>
                   <Link to="/tourist/my-orders" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>View My Orders</Link>
                   <Link to="/ceylon-lence" className="py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={()=>setSidebarOpen(false)}>Ceylon Lence</Link>
@@ -130,6 +131,7 @@ const MainNavbar = () => {
           <Link to="/tours" className="block py-2 text-gray-700 hover:text-blue-700">Tours</Link>
           <Link to="/marketplace" className="block py-2 text-gray-700 hover:text-blue-700">Ceylone Marketplace</Link>
           <Link to="/blogs" className="block py-2 text-gray-700 hover:text-blue-700">Blogs</Link>
+          <Link to="/smart-itinerary" className="block py-2 text-gray-700 hover:text-blue-700">Smart Itinerary Planner</Link>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="block w-full text-left py-2 text-gray-700 hover:text-blue-700"

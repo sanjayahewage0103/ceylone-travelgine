@@ -22,6 +22,9 @@ const HomePage = () => (
         <Link to="/vendor/login">
           <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">Vendor Login</button>
         </Link>
+        <Link to="/smart-itinerary">
+          <button className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">Smart Itinerary Planner</button>
+        </Link>
       </div>
     </div>
   </>
