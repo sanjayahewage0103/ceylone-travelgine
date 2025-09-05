@@ -1,2 +1,4 @@
 # Ignore uploaded images and other user-generated content
 backend/uploads/
+ai-service/trip-planner/models/cosine_similarity_matrix.joblib
+ml-pipeline/trip paln/models/cosine_similarity_matrix.joblib
