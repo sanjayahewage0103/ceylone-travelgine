@@ -25,7 +25,12 @@ class BookingService {
   }
 
   static async getUserBookings(user) {
-    return Booking.find({ user }).populate('tourPackage');
+    // Populate tourPackage and its guide_id (User)
+    return Booking.find({ user })
+      .populate({
+        path: 'tourPackage',
+        populate: { path: 'guide_id', select: 'fullName email' }
+      });
   }
 }
 

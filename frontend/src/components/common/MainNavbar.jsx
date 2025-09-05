@@ -52,7 +52,7 @@ const MainNavbar = () => {
         </Link>
         {/* Center: Nav Links (hidden on mobile) */}
         <div className="hidden md:flex gap-6 items-center">
-          <Link to="/explore-lanka" className="text-gray-700 hover:text-blue-700 font-medium">Explore Lanka</Link>
+          <Link to="/" className="text-gray-700 hover:text-blue-700 font-medium">Explore Lanka</Link>
           <Link to="/tours" className="text-gray-700 hover:text-blue-700 font-medium">Tours</Link>
           <Link to="/marketplace" className="text-gray-700 hover:text-blue-700 font-medium">Ceylone Marketplace</Link>
           <Link to="/blogs" className="text-gray-700 hover:text-blue-700 font-medium">Blogs</Link>

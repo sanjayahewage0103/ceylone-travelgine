@@ -1,8 +1,10 @@
 
+
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TourPackageCard from '../components/guide/TourPackageCard';
 import tourPackageService from '../services/tourPackageService';
+import MainNavbar from '../components/common/MainNavbar';
 
 const DISTRICTS = [
   'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya', 'Galle', 'Matara', 'Hambantota',
@@ -102,7 +104,9 @@ export default function AllTours() {
   const otherTours = tours.slice(5);
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <>
+      <MainNavbar />
+      <div className="bg-gray-50 min-h-screen">
       {/* Section Title and Search */}
       <div className="bg-white border-b py-6 px-4 md:px-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -223,6 +227,7 @@ export default function AllTours() {
           )}
         </main>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

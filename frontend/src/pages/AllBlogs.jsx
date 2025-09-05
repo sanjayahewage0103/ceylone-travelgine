@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import BlogCard from '../components/guide/BlogCard';
 import axios from 'axios';
+import MainNavbar from '../components/common/MainNavbar';
 
 export default function AllBlogs() {
   const [blogs, setBlogs] = useState([]);
@@ -58,7 +60,9 @@ export default function AllBlogs() {
   // Debug log to check what blogs are being rendered
   console.log('AllBlogs filtered blogs:', filtered);
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <>
+      <MainNavbar />
+      <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-cyan-800 mb-2">All Blogs</h1>
@@ -103,6 +107,7 @@ export default function AllBlogs() {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
