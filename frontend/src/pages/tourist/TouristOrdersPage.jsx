@@ -1,32 +1,52 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const TouristOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
+  const fetchOrders = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('Not authenticated');
+      const res = await fetch('/api/orders/user', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Failed to fetch orders');
+      const data = await res.json();
+      setOrders(Array.isArray(data) ? data : (data.orders || []));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Not authenticated');
-        const res = await fetch('/api/orders/user', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error('Failed to fetch orders');
-        const data = await res.json();
-        // Backend returns array directly
-        setOrders(Array.isArray(data) ? data : (data.orders || []));
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
   }, []);
+
+  const handleCancel = async (order) => {
+    if (!window.confirm('Are you sure you want to cancel this order?')) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/orders/user/${order.orderId || order._id}/cancel`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: 'Cancelled' })
+      });
+      if (!res.ok) throw new Error('Failed to cancel order');
+      await fetchOrders();
+    } catch (err) {
+      alert('Cancel failed: ' + err.message);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-8">
@@ -68,9 +88,9 @@ const TouristOrdersPage = () => {
                   <td className="px-4 py-2">{order.createdAt ? new Date(order.createdAt).toLocaleString() : ''}</td>
                   <td className="px-4 py-2">
                     {/* Example actions: View, Cancel, etc. */}
-                    <button className="text-blue-600 hover:underline mr-2">View</button>
+                    <button className="text-blue-600 hover:underline mr-2" onClick={() => navigate(`/tourist/my-orders/${order.orderId || order._id}`)}>View</button>
                     {order.orderStatus === 'Pending' && (
-                      <button className="text-red-600 hover:underline">Cancel</button>
+                      <button className="text-red-600 hover:underline" onClick={() => handleCancel(order)}>Cancel</button>
                     )}
                   </td>
                 </tr>

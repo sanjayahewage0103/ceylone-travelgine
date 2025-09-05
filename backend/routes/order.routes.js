@@ -1,8 +1,11 @@
+
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/order.controller');
 const { authenticate } = require('../middleware/auth');
 const { authenticateVendor } = require('../middleware/auth');
+// Tourist: cancel their order (PATCH for status)
+router.patch('/user/:orderId/cancel', authenticate, orderController.updateOrderStatus);
 
 // Tourist places order (checkout)
 router.post('/checkout', authenticate, orderController.checkout);
