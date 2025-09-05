@@ -65,6 +65,9 @@ function GuideProfile() {
               <div>
                 <a href={`/tours/${tour._id}`} className="text-lg font-bold text-cyan-700 hover:underline">{tour.package_name}</a>
                 <div className="text-xs text-gray-400 mt-1">LKR {tour.price_lkr}</div>
+                <div className="text-xs mt-2">
+                  Guide: <a href={`/guides/${guide.id}`} className="text-cyan-700 hover:underline font-semibold">{guide.name}</a>
+                </div>
               </div>
             </div>
           )) : <div className="text-gray-400">No tour packages yet.</div>}

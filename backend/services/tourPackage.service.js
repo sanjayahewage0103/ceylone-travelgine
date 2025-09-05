@@ -39,7 +39,14 @@ class TourPackageService {
     if (maxPrice) query.price_lkr = { ...query.price_lkr, $lte: Number(maxPrice) };
     let sort = {};
     if (sortBy) sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
-    return await TourPackage.find(query).sort(sort);
+    // Populate guide info (name, _id) for each tour
+    return await TourPackage.find(query)
+      .sort(sort)
+      .populate({
+        path: 'guide_id',
+        select: 'fullName',
+        model: 'User'
+      });
   }
 }
 

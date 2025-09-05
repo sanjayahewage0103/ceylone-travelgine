@@ -56,6 +56,12 @@ const TourPackageCard = ({ pkg, onClick }) => {
           <span className="text-rose-600 text-xl font-bold">${pkg.price_lkr}</span>
           <span className="text-gray-500 text-xs">per person</span>
         </div>
+        {/* Guide info */}
+        {pkg.guide_id && (
+          <div className="text-xs mt-2">
+            Tour by: <a href={`/guides/${pkg.guide_id._id}`} className="text-cyan-700 hover:underline font-semibold">{pkg.guide_id.fullName}</a>
+          </div>
+        )}
       </div>
     </div>
   );

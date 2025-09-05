@@ -76,8 +76,11 @@ router.put('/me', authenticate, upload.fields([
     res.status(500).json({ error: err.message });
   }
 });
-// Public: Get guide profile (with blogs and tour packages)
+
+// Public: Get guide analytics (stats, revenue, bookings, calendar)
 const guideController = require('../controllers/guide.controller');
+const guideAnalyticsController = require('../controllers/guideAnalytics.controller');
+router.get('/:id/analytics', guideAnalyticsController.getGuideAnalytics);
 router.get('/:id', guideController.getGuideProfile);
 
 module.exports = router;
