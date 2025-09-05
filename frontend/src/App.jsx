@@ -1,3 +1,4 @@
+import TouristMyToursPage from './pages/tourist/TouristMyToursPage';
 import TouristOrderDetailPage from './pages/tourist/TouristOrderDetailPage';
 import TouristOrdersPage from './pages/tourist/TouristOrdersPage';
 import GuideProfile from './pages/GuideProfile.jsx';
@@ -93,6 +94,8 @@ function App() {
   {/* Tourist personal orders */}
   <Route path="/tourist/my-orders" element={<TouristOrdersPage />} />
   <Route path="/tourist/my-orders/:orderId" element={<TouristOrderDetailPage />} />
+  {/* Tourist my tours */}
+  <Route path="/tourist/my-tours" element={<TouristMyToursPage />} />
   {/* Public guide profile/portfolio */}
   <Route path="/guides/:id" element={<GuideProfile />} />
     </Routes>
