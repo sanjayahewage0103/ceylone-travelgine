@@ -59,6 +59,7 @@ const Footer = () => {
               <li><Link to="/smart-itinerary" className="text-gray-300 hover:text-white transition-colors">Smart Itinerary</Link></li>
               <li><Link to="/tours" className="text-gray-300 hover:text-white transition-colors">Tour Packages</Link></li>
               <li><Link to="/marketplace" className="text-gray-300 hover:text-white transition-colors">Marketplace</Link></li>
+              <li><Link to="/marketplace/products" className="text-gray-300 hover:text-white transition-colors">Marketplace Products</Link></li>
               <li><Link to="/blogs" className="text-gray-300 hover:text-white transition-colors">Blogs</Link></li>
             </ul>
           </div>
@@ -71,6 +72,7 @@ const Footer = () => {
               <li><Link to="/business-intro" className="text-gray-300 hover:text-white transition-colors">Business Solutions</Link></li>
               <li><Link to="/guides" className="text-gray-300 hover:text-white transition-colors">Find Local Guides</Link></li>
               <li><Link to="/marketplace" className="text-gray-300 hover:text-white transition-colors">Sri Lankan Products</Link></li>
+              <li><Link to="/marketplace/shops" className="text-gray-300 hover:text-white transition-colors">Local Vendors</Link></li>
             </ul>
           </div>
           

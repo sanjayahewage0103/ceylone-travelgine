@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import MarketplaceLayout from '../../components/marketplace/MarketplaceLayout';
 import axios from 'axios';
 
 const CheckoutPage = () => {
@@ -41,7 +42,8 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-center py-8">
+    <MarketplaceLayout>
+      <div className="flex justify-center items-center py-8">
       <form className="bg-white rounded-lg shadow p-8 w-full max-w-lg" onSubmit={handlePlaceOrder}>
         <h2 className="text-2xl font-bold mb-6">Checkout</h2>
         <div className="mb-4">
@@ -97,7 +99,8 @@ const CheckoutPage = () => {
           {loading ? 'Placing Order...' : 'Place Order'}
         </button>
       </form>
-    </div>
+      </div>
+    </MarketplaceLayout>
   );
 };
 

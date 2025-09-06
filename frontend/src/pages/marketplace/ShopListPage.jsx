@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import MainNavbar from '../../components/common/MainNavbar';
-import MarketplaceNavbar from '../../components/marketplace/MarketplaceNavbar';
+import MarketplaceLayout from '../../components/marketplace/MarketplaceLayout';
 
 
 import { useNavigate } from 'react-router-dom';
@@ -64,9 +63,7 @@ const ShopListPage = () => {
   }, []);
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <MainNavbar />
-      <MarketplaceNavbar />
+    <MarketplaceLayout>
       <div className="w-full h-48 bg-cover bg-center mb-8" style={{ backgroundImage: `url('/marketplace-banner.jpg')` }} />
       <section className="container mx-auto px-4 mb-8">
         <div className="bg-white bg-opacity-90 rounded-lg shadow p-6 text-center">
@@ -89,7 +86,7 @@ const ShopListPage = () => {
           </div>
         )}
       </div>
-    </div>
+    </MarketplaceLayout>
   );
 };
 

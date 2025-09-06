@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import MainNavbar from '../../components/common/MainNavbar';
-import MarketplaceNavbar from '../../components/marketplace/MarketplaceNavbar';
+import MarketplaceLayout from '../../components/marketplace/MarketplaceLayout';
 import { useCart } from '../../context/CartContext';
+import { motion } from 'framer-motion';
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
@@ -47,111 +47,241 @@ const ProductDetailPage = () => {
     fetchProduct();
   }, [productId]);
 
-  if (loading) return <div className="text-center py-20">Loading...</div>;
-  if (error) return <div className="text-center text-red-500 py-20">{error}</div>;
+  if (loading) {
+    return (
+      <MarketplaceLayout>
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-600"></div>
+        </div>
+      </MarketplaceLayout>
+    );
+  }
+  
+  if (error) {
+    return (
+      <MarketplaceLayout>
+        <div className="container mx-auto py-12 px-4">
+          <div className="glass-card p-8 rounded-xl text-center">
+            <div className="text-red-500 text-xl mb-4">Error: {error}</div>
+            <p className="mb-6">We couldn't find the product you're looking for.</p>
+            <Link to="/marketplace" className="btn-gradient py-2 px-6 rounded-lg">
+              Return to Marketplace
+            </Link>
+          </div>
+        </div>
+      </MarketplaceLayout>
+    );
+  }
 
   if (!product) return null;
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <MainNavbar />
-      <MarketplaceNavbar />
-      <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow p-6 flex flex-col md:flex-row gap-8">
-        {/* Vendor Shop Link */}
-        <div className="mb-4">
-          <span className="text-gray-600">Shop: </span>
-          {product.vendor && product.vendor._id ? (
-            <Link
-              to={`/marketplace/vendor/${product.vendor._id}`}
-              className="text-green-700 font-semibold hover:underline"
-            >
-              {product.vendor.shopName || 'View Shop'}
-            </Link>
-          ) : (
-            <span className="text-red-500 font-semibold">Unknown Shop</span>
-          )}
-        </div>
-        {/* Left: Main Image */}
-        <div className="flex-1 flex flex-col items-center">
-          <img
-            src={product.images && product.images.length > 0 ? (product.images[mainImgIdx]?.startsWith('/uploads') ? `http://localhost:5000${product.images[mainImgIdx]}` : product.images[mainImgIdx]) : '/placeholder.png'}
-            alt={product.name}
-            className="w-64 h-64 object-contain rounded mb-4 border"
-            onError={e => { e.target.onerror = null; e.target.src = '/placeholder.png'; }}
-          />
-          {/* Thumbnails */}
-          {product.images && product.images.length > 1 && (
-            <div className="flex gap-2 mb-2">
-              {product.images.map((img, idx) => (
+    <MarketplaceLayout>
+      <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumb */}
+        <nav className="glass-card rounded-lg px-4 py-2 text-sm inline-flex items-center space-x-2 mb-6">
+          <Link to="/" className="text-gray-600 hover:text-gradient transition-colors">Home</Link>
+          <span className="text-gray-400">/</span>
+          <Link to="/marketplace" className="text-gray-600 hover:text-gradient transition-colors">Marketplace</Link>
+          <span className="text-gray-400">/</span>
+          <span className="text-gradient font-medium">{product.name}</span>
+        </nav>
+
+        {/* Product Detail Card */}
+        <div className="glass-card rounded-xl overflow-hidden shadow-lg mb-10">
+          <div className="flex flex-col md:flex-row">
+            {/* Left: Product Images */}
+            <div className="md:w-2/5 p-6">
+              <div className="bg-white/40 backdrop-blur-sm rounded-xl overflow-hidden shadow-sm mb-4 p-4 flex items-center justify-center">
                 <img
-                  key={idx}
-                  src={img.startsWith('/uploads') ? `http://localhost:5000${img}` : img}
-                  alt={`thumb-${idx}`}
-                  className={`w-14 h-14 object-cover rounded border cursor-pointer ${mainImgIdx === idx ? 'border-blue-500 border-2' : 'border-gray-300'}`}
-                  onClick={() => setMainImgIdx(idx)}
+                  src={product.images && product.images.length > 0 ? (product.images[mainImgIdx]?.startsWith('/uploads') ? `http://localhost:5000${product.images[mainImgIdx]}` : product.images[mainImgIdx]) : '/placeholder.png'}
+                  alt={product.name}
+                  className="w-full h-80 object-contain transition-all duration-300 hover:scale-105"
                   onError={e => { e.target.onerror = null; e.target.src = '/placeholder.png'; }}
                 />
+              </div>
+              
+              {/* Thumbnails */}
+              {product.images && product.images.length > 1 && (
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {product.images.map((img, idx) => (
+                    <div 
+                      key={idx}
+                      className={`w-16 h-16 rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ${mainImgIdx === idx ? 'ring-2 ring-green-500 scale-105' : 'opacity-70 hover:opacity-100'}`}
+                      onClick={() => setMainImgIdx(idx)}
+                    >
+                      <img
+                        src={img.startsWith('/uploads') ? `http://localhost:5000${img}` : img}
+                        alt={`thumb-${idx}`}
+                        className="w-full h-full object-cover"
+                        onError={e => { e.target.onerror = null; e.target.src = '/placeholder.png'; }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* Right: Product Details */}
+            <div className="md:w-3/5 p-6 flex flex-col">
+              {/* Vendor Info */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  {product.vendor?.logo || product.vendor?.files?.logoUrl ? (
+                    <img 
+                      src={product.vendor.logo || product.vendor.files?.logoUrl} 
+                      alt="Shop Logo" 
+                      className="w-12 h-12 rounded-full object-cover border border-white/20 mr-3" 
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center mr-3">
+                      <span className="text-white font-bold text-lg">
+                        {(product.vendor?.shopName || product.vendor?.name || 'S')[0].toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <div>
+                    <div className="text-sm text-gray-600">Sold by</div>
+                    <Link
+                      to={`/marketplace/vendor/${product.vendor?._id || '#'}`}
+                      className="font-medium hover:text-gradient transition-colors"
+                    >
+                      {product.vendor?.shopName || product.vendor?.name || product.vendorId?.shopName || product.vendorId?.name || 'Unknown Shop'}
+                    </Link>
+                  </div>
+                </div>
+                <div className="text-sm bg-white/50 backdrop-blur-sm py-1 px-3 rounded-full border border-white/20">
+                  Category: <span className="font-medium text-gradient">{product.category?.label || product.category}</span>
+                </div>
+              </div>
+              
+              {/* Product Name & Price */}
+              <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
+              <div className="text-3xl text-gradient font-bold mb-4">
+                Rs. {product.price?.toLocaleString() ?? product.price}
+              </div>
+              
+              {/* Description */}
+              <div className="mb-6 text-gray-700 bg-white/30 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <h3 className="font-medium mb-2">Description</h3>
+                <p className="text-gray-600">{product.description}</p>
+              </div>
+              
+              {/* Stock & Status */}
+              <div className="flex gap-6 mb-6">
+                <div className="bg-white/30 backdrop-blur-sm rounded-lg py-2 px-4 border border-white/20">
+                  <div className="text-sm text-gray-600">Stock</div>
+                  <div className="font-medium">{product.stockQuantity ?? product.stockQty ?? 'N/A'} units</div>
+                </div>
+                <div className="bg-white/30 backdrop-blur-sm rounded-lg py-2 px-4 border border-white/20">
+                  <div className="text-sm text-gray-600">Status</div>
+                  <div className={(product.stockQuantity ?? product.stockQty) > 0 ? 'font-medium text-green-600' : 'font-medium text-red-600'}>
+                    {(product.stockQuantity ?? product.stockQty) > 0 ? 'In Stock' : 'Out of Stock'}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Add to Cart */}
+              <div className="mt-auto">
+                <div className="flex items-center gap-3">
+                  <div className="flex border border-white/30 rounded-lg overflow-hidden backdrop-blur-sm bg-white/50">
+                    <button 
+                      onClick={() => setQty(q => Math.max(1, q - 1))} 
+                      className="px-4 py-2 hover:bg-white/80 text-gray-700 transition-colors"
+                    >
+                      -
+                    </button>
+                    <input 
+                      type="number" 
+                      value={qty} 
+                      min={1} 
+                      max={product.stockQuantity || product.stockQty || 99} 
+                      onChange={e => setQty(Number(e.target.value))} 
+                      className="w-14 text-center border-x border-white/30 focus:outline-none bg-transparent"
+                      aria-label="Quantity"
+                    />
+                    <button 
+                      onClick={() => setQty(q => Math.min((product.stockQuantity || product.stockQty || 99), q + 1))} 
+                      className="px-4 py-2 hover:bg-white/80 text-gray-700 transition-colors"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button
+                    className="flex-1 py-2.5 btn-gradient rounded-lg flex items-center justify-center gap-2 disabled:opacity-60"
+                    disabled={cartLoading || (product.stockQuantity ?? product.stockQty) <= 0}
+                    onClick={async () => {
+                      await addToCart(product._id, qty);
+                    }}
+                  >
+                    {cartLoading ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Adding to Cart...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span>Add to Cart</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* More from shop */}
+        {shopProducts.length > 0 && (
+          <div className="glass-card rounded-xl p-6 mb-8">
+            <h2 className="text-xl font-bold mb-6 text-gradient">
+              More from {product.vendor?.shopName || product.vendor?.name || product.vendorId?.shopName || product.vendorId?.name}
+            </h2>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {shopProducts.map((p, index) => (
+                <div 
+                  key={p._id} 
+                  className="bg-white/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer"
+                  onClick={() => navigate(`/marketplace/product/${p._id}`)}
+                >
+                  <div className="h-40 overflow-hidden">
+                    <img
+                      src={p.images && p.images.length > 0 ? (p.images[0]?.startsWith('/uploads') ? `http://localhost:5000${p.images[0]}` : p.images[0]) : '/placeholder.png'}
+                      alt={p.name}
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                      onError={e => { e.target.onerror = null; e.target.src = '/placeholder.png'; }}
+                    />
+                  </div>
+                  <div className="p-4">
+                    <div className="font-medium text-sm mb-1 line-clamp-2">{p.name}</div>
+                    <div className="text-gradient font-bold">Rs. {p.price?.toLocaleString() ?? p.price}</div>
+                  </div>
+                </div>
               ))}
             </div>
-          )}
-          <div className="text-sm text-gray-500 mt-2">Category: <span className="font-semibold text-blue-700">{product.category?.label || product.category}</span></div>
-        </div>
-        {/* Center: Details */}
-        <div className="flex-[2] flex flex-col gap-2">
-          <h1 className="text-2xl font-bold mb-1">{product.name}</h1>
-          <div className="text-gray-600 mb-1">Sold by - <span className="font-semibold">{product.vendor?.shopName || product.vendor?.name || product.vendorId?.shopName || product.vendorId?.name}</span></div>
-          <div className="text-2xl text-green-700 font-bold mb-2">${product.price?.toFixed(2) ?? product.price}</div>
-          <div className="mb-2 text-gray-700">{product.description}</div>
-          <div className="flex gap-4 mb-2">
-            <div>Stock: <span className="font-semibold">{product.stockQuantity ?? product.stockQty ?? 'N/A'}</span></div>
-            <div>Status: <span className={(product.stockQuantity ?? product.stockQty) > 0 ? 'text-green-600' : 'text-red-600'}>{(product.stockQuantity ?? product.stockQty) > 0 ? 'Available' : 'Out of Stock'}</span></div>
-          </div>
-          <div className="flex items-center gap-2 mb-4">
-            <button onClick={() => setQty(q => Math.max(1, q - 1))} className="px-2 py-1 bg-gray-200 rounded">-</button>
-            <input type="number" value={qty} min={1} max={product.stockQuantity || product.stockQty || 99} onChange={e => setQty(Number(e.target.value))} className="w-12 text-center border rounded" />
-            <button onClick={() => setQty(q => Math.min((product.stockQuantity || product.stockQty || 99), q + 1))} className="px-2 py-1 bg-gray-200 rounded">+</button>
-            <button
-              className="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-60"
-              disabled={cartLoading}
-              onClick={async () => {
-                await addToCart(product._id, qty);
-              }}
-            >
-              {cartLoading ? 'Adding...' : 'Add to Cart'}
-            </button>
-          </div>
-        </div>
-        {/* Right: Shop Logo */}
-        <div className="flex flex-col items-center min-w-[120px]">
-          {product.vendor?.logo || product.vendor?.files?.logoUrl ? (
-            <img src={product.vendor.logo || product.vendor.files?.logoUrl} alt="Shop Logo" className="w-20 h-20 object-contain mb-2" />
-          ) : null}
-          <div className="text-center text-xs text-gray-500">{product.vendor?.shopName || product.vendor?.name || product.vendorId?.shopName || product.vendorId?.name}</div>
-          <Link to={`/marketplace/shops`} className="mt-2 text-blue-600 underline text-xs">View Shop</Link>
-        </div>
-      </div>
-      {/* More from shop */}
-      <div className="max-w-5xl mx-auto mt-10">
-  <h2 className="text-lg font-bold mb-4">More from {product.vendor?.shopName || product.vendor?.name || product.vendorId?.shopName || product.vendorId?.name}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {shopProducts.map(p => (
-            <div key={p._id} className="bg-white rounded shadow p-3 cursor-pointer hover:shadow-lg" onClick={() => navigate(`/marketplace/product/${p._id}`)}>
-              <img
-                src={p.images && p.images.length > 0 ? (p.images[0]?.startsWith('/uploads') ? `http://localhost:5000${p.images[0]}` : p.images[0]) : '/placeholder.png'}
-                alt={p.name}
-                className="w-full h-32 object-contain mb-2"
-                onError={e => { e.target.onerror = null; e.target.src = '/placeholder.png'; }}
-              />
-              <div className="font-semibold text-sm mb-1">{p.name}</div>
-              <div className="text-green-700 font-bold">${p.price?.toFixed(2) ?? p.price}</div>
+            
+            <div className="mt-6 text-center">
+              <Link 
+                to={`/marketplace/vendor/${product.vendor?._id || '#'}`} 
+                className="btn-gradient inline-flex items-center justify-center py-2 px-6 rounded-lg"
+              >
+                Visit Shop
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </Link>
             </div>
-          ))}
-        </div>
-        <div className="mt-4 text-right">
-          <Link to={`/marketplace/shops`} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">View Shop</Link>
-        </div>
+          </div>
+        )}
       </div>
-    </div>
+    </MarketplaceLayout>
   );
 };
 

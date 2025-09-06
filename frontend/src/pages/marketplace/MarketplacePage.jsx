@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import MainNavbar from '../../components/common/MainNavbar';
-import MarketplaceNavbar from '../../components/marketplace/MarketplaceNavbar';
+import { Link } from 'react-router-dom';
+import { FiArrowRight } from 'react-icons/fi';
+import { motion } from 'framer-motion';
+import MarketplaceLayout from '../../components/marketplace/MarketplaceLayout';
 import CategoryCard from '../../components/marketplace/CategoryCard';
 import ProductCard from '../../components/marketplace/ProductCard';
 const bannerImg = '/marketplace-banner.jpg'; // Use public asset URL
@@ -49,9 +51,7 @@ const MarketplacePage = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-  <MainNavbar />
-  <MarketplaceNavbar search={search} setSearch={setSearch} onSearch={handleSearch} />
+    <MarketplaceLayout search={search} setSearch={setSearch} onSearch={handleSearch}>
       {/* Banner Section */}
       <div className="w-full h-56 md:h-72 lg:h-80 bg-gray-200 flex items-center justify-center mb-8">
         <img src={bannerImg} alt="Marketplace Banner" className="object-cover w-full h-full" />
@@ -96,7 +96,7 @@ const MarketplacePage = () => {
           </div>
         )}
       </section>
-    </div>
+    </MarketplaceLayout>
   );
 };
 

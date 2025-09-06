@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, rgba(0,128,128,0.05) 1px, transparent 1px), 
+                      linear-gradient(to bottom, rgba(0,128,128,0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  
+  /* Glassmorphism card effect */
+  .glass-card {
+    @apply backdrop-blur-md bg-white/70 border border-white/20 shadow-md;
+  }
+  
+  /* Gradient text effect */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-teal-500;
+  }
+  
+  /* Gradient button effect */
+  .btn-gradient {
+    @apply bg-gradient-to-r from-green-600 to-teal-500 text-white transition-all duration-300 hover:shadow-lg hover:from-green-700 hover:to-teal-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2;
+  }
+}

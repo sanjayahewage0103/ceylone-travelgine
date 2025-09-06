@@ -1,2 +1,3 @@
 # Ignore uploaded images and other user-generated content
 backend/uploads/
+frontend/public/
