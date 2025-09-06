@@ -56,27 +56,27 @@ class AdminService {
 		};
 	}
 
-	// Get all users with optional filters and populate professional profiles
-	async getAllUsers(filters = {}) {
-		const query = {};
-		if (filters.role) query.role = filters.role;
-		// Only allow valid roles
-		const validRoles = ['tourist', 'vendor', 'guide'];
-		if (query.role && !validRoles.includes(query.role)) delete query.role;
-		// Find users (except admin)
-		const users = await User.find({ ...query, role: { $in: validRoles } }).select('-passwordHash');
-		// Populate professional profiles
-		const populated = await Promise.all(users.map(async user => {
-			let profile = null;
-			if (user.role === 'vendor') {
-				profile = await Vendor.findOne({ userId: user._id });
-			} else if (user.role === 'guide') {
-				profile = await Guide.findOne({ userId: user._id });
-			}
-			return { ...user.toObject(), profile };
-		}));
-		return populated;
-	}
+       // Get all users with optional filters and populate professional profiles
+       async getAllUsers(filters = {}) {
+	       const query = {};
+	       if (filters.role) query.role = filters.role;
+	       // Only allow valid roles for filtering, but always include admin in the result for admin panel
+	       const validRoles = ['tourist', 'vendor', 'guide', 'admin'];
+	       if (query.role && !validRoles.includes(query.role)) delete query.role;
+	       // Find users (including admin)
+	       const users = await User.find({ ...query, role: { $in: validRoles } }).select('-passwordHash');
+	       // Populate professional profiles
+	       const populated = await Promise.all(users.map(async user => {
+		       let profile = null;
+		       if (user.role === 'vendor') {
+			       profile = await Vendor.findOne({ userId: user._id });
+		       } else if (user.role === 'guide') {
+			       profile = await Guide.findOne({ userId: user._id });
+		       }
+		       return { ...user.toObject(), profile };
+	       }));
+	       return populated;
+       }
 
 	// Get a single user's details with professional profile
 	async getUserDetails(userId) {

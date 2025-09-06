@@ -254,7 +254,7 @@ const MainNavbar = () => {
                     <RiVipDiamondLine className="text-blue-500" />
                     <div>
                       <div className="font-medium">Ceylon Lence</div>
-                      <div className="text-xs text-gray-500">Premium experiences</div>
+                      <div className="text-xs text-gray-500">Landmark AI Identifier</div>
                     </div>
                   </Link>
                   <Link to="/business-intro" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-teal-50/50 hover:to-blue-50/50 hover:text-teal-600">

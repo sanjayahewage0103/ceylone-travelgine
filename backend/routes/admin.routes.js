@@ -6,6 +6,9 @@ const { getAllUsers, getUserDetails, updateUserStatus, addUser, editUser, delete
 router.get('/products/pending', getPendingProducts);
 router.get('/products/all', getAllProducts);
 router.patch('/products/:id/approval', setProductApproval);
+// Product statistics for dashboard
+const { getProductStats } = require('../controllers/admin.controller');
+router.get('/products/stats', getProductStats);
 
 // Dashboard endpoints
 router.get('/stats', getDashboardStats);

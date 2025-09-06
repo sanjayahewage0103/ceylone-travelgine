@@ -1,3 +1,4 @@
+import LandmarkLense from './pages/landmark-lence/LandmarkLense.jsx';
 import TouristMyToursPage from './pages/tourist/TouristMyToursPage';
 import TouristOrderDetailPage from './pages/tourist/TouristOrderDetailPage';
 import TouristOrdersPage from './pages/tourist/TouristOrdersPage';
@@ -22,7 +23,7 @@ import CheckoutPage from './pages/marketplace/CheckoutPage';
 import OrderConfirmationPage from './pages/marketplace/OrderConfirmationPage';
 import VendorShopProfilePage from './pages/marketplace/VendorShopProfilePage';
 import CartPage from './pages/marketplace/CartPage';
-import AdminLoginPage from './pages/admin/AdminLoginPage';
+
 import TouristAuthPage from './pages/tourist/TouristAuthPage';
 import VendorAuthPage from './pages/vendor/VendorAuthPage';
 import VendorDashboardPage from './pages/vendor/VendorDashboardPage';
@@ -36,12 +37,15 @@ import AllTours from './pages/AllTours';
 import TourPackageDetail from './pages/TourPackageDetail';
 import VendorForecastingDashboard from './pages/vendor/VendorForecastingDashboard';
 import VendorAIForecastPage from './pages/vendor/VendorAIForecastPage';
+
 import DashboardPage from './pages/admin/DashboardPage';
 import ManageUsersPage from './pages/admin/ManageUsersPage';
 import PendingProductsPage from './pages/admin/PendingProductsPage';
 import ManageProductsPage from './pages/admin/ManageProductsPage';
 import AdminLayout from './layouts/AdminLayout';
 import MainLayout from './layouts/MainLayout';
+import ChatBotDemo from './pages/ChatBotDemo';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
 
 import GuideManageBookings from './pages/GuideManageBookings';
 import GuideCalendarNotes from './pages/GuideCalendarNotes';
@@ -70,7 +74,8 @@ function App() {
         <Route path="/tours" element={<AllTours />} />
         <Route path="/tours/:id" element={<TourPackageDetail />} />
         <Route path="/guides/:id" element={<GuideProfile />} />
-        <Route path="/smart-itinerary" element={<SmartItineraryDashboard />} />
+  <Route path="/smart-itinerary" element={<SmartItineraryDashboard />} />
+  <Route path="/ceylon-lence" element={<LandmarkLense />} />
         
         {/* Auth pages */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -102,6 +107,9 @@ function App() {
         <Route path="/tourist/my-orders" element={<TouristOrdersPage />} />
         <Route path="/tourist/my-orders/:orderId" element={<TouristOrderDetailPage />} />
         <Route path="/tourist/my-tours" element={<TouristMyToursPage />} />
+        {/* Chatbot Demo and Admin Login (public, outside layouts) */}
+  <Route path="/chatbot-demo" element={<ChatBotDemo />} />
+  <Route path="/admin-login" element={<AdminLoginPage />} />
       </Route>
       
       {/* Admin routes with custom sidebar layout */}

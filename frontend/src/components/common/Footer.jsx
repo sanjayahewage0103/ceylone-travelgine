@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FiMessageCircle } from 'react-icons/fi';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -134,13 +135,25 @@ const Footer = () => {
           <div className="text-gray-400 text-sm mb-4 md:mb-0">
             &copy; {currentYear} Ceylon Travelgine. All rights reserved.
           </div>
-          <div className="flex space-x-6">
+          <div className="flex space-x-6 items-center">
             <Link to="/privacy-policy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link>
             <Link to="/terms-of-service" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</Link>
             <Link to="/contact" className="text-gray-400 hover:text-white text-sm transition-colors">Contact Us</Link>
+            <span className="mx-2 text-gray-500">|</span>
+            <Link to="/admin-login" className="text-teal-400 hover:text-white text-sm font-semibold transition-colors">Admin Login</Link>
           </div>
         </div>
       </div>
+
+      {/* Floating Chatbot Button (for all pages) */}
+      <Link
+        to="/chatbot-demo"
+        className="fixed bottom-8 right-8 z-50 bg-teal-500 hover:bg-teal-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg transition-all duration-200"
+        aria-label="Open Chatbot Demo"
+        style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}
+      >
+        <FiMessageCircle size={32} />
+      </Link>
     </footer>
   );
 };

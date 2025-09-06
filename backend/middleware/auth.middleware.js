@@ -1,3 +1,6 @@
+
+const { authenticate } = require('./auth');
+
 const isAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Access denied. Admin role required.' });
@@ -5,4 +8,4 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
-module.exports = { isAdmin };
+module.exports = { auth: authenticate, isAdmin };

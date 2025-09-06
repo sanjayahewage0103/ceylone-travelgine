@@ -1,14 +1,14 @@
 
 
-import { useNavigate } from 'react-router-dom';
+
+import React, { useEffect, useState } from 'react';
+import StatCard from '../../components/admin/Dashboard/StatCard';
+import UserStatsChart from '../../components/admin/Dashboard/UserStatsChart';
+import ManageUsersPage from './ManageUsersPage';
+import adminService from '../../services/adminService';
 
 const DashboardPage = () => {
-  const navigate = useNavigate();
-  return (
-    <div className="flex flex-col items-center justify-center h-full min-h-[60vh]">
-      <h1 className="text-3xl font-bold mb-8">Ceylone Travelgine</h1>
-    </div>
-  );
+  return <ManageUsersPage />;
 };
 
 export default DashboardPage;

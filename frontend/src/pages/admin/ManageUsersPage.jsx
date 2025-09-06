@@ -1,9 +1,17 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { FiSend, FiMessageCircle } from 'react-icons/fi';
+// Demo chatbot responses
+const DEMO_RESPONSES = [
+  "Hi! I'm your Smart Tour Chatbot. How can I help you plan your Sri Lankan adventure?",
+  "I can suggest places, create itineraries, and answer travel questions!",
+  "Try asking: 'What are the top 5 places to visit in Kandy?' or 'Plan a 3-day trip for me.'"
+];
 import UserFilters from '../../components/admin/Users/UserFilters';
 import UsersTable from '../../components/admin/Users/UsersTable';
 import UserDetailModal from '../../components/admin/Users/UserDetailModal';
 import StatCard from '../../components/admin/Dashboard/StatCard';
+import UserStatsChart from '../../components/admin/Dashboard/UserStatsChart';
 import PendingApprovalsTable from '../../components/admin/Dashboard/PendingApprovalsTable';
 import adminService from '../../services/adminService';
 
@@ -32,6 +40,34 @@ const ManageUsersPage = () => {
   const [addLoading, setAddLoading] = useState(false);
   const [editUser, setEditUser] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  // Chatbot state
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+    { sender: 'bot', text: DEMO_RESPONSES[0] }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const chatEndRef = useRef(null);
+
+  useEffect(() => {
+    if (chatOpen && chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages, chatOpen]);
+
+  const handleChatSend = async (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    setChatMessages(msgs => [...msgs, { sender: 'user', text: chatInput }]);
+    setChatLoading(true);
+    setChatInput('');
+    setTimeout(() => {
+      const botMsg = DEMO_RESPONSES[(chatMessages.length) % DEMO_RESPONSES.length];
+      setChatMessages(msgs => [...msgs, { sender: 'bot', text: botMsg }]);
+      setChatLoading(false);
+    }, 900);
+  };
 
   // Fetch all data on mount and when filters change
   useEffect(() => {
@@ -134,12 +170,18 @@ const ManageUsersPage = () => {
   return (
     <div className="relative">
       <h1 className="text-2xl font-bold mb-6">User Management</h1>
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <StatCard title="Total Users" value={stats.totalUsers || 0} />
-        <StatCard title="Total Vendors" value={stats.totalVendors || 0} />
-        <StatCard title="Total Guides" value={stats.totalGuides || 0} />
-        <StatCard title="Total Tourists" value={stats.totalTourists || 0} />
+      {/* Stat cards and user stats chart */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+          <StatCard title="Total Users" value={stats.totalUsers || 0} />
+          <StatCard title="Total Vendors" value={stats.totalVendors || 0} />
+          <StatCard title="Total Guides" value={stats.totalGuides || 0} />
+          <StatCard title="Total Tourists" value={stats.totalTourists || 0} />
+        </div>
+        <div>
+          {/* User role distribution chart */}
+          <UserStatsChart stats={stats} />
+        </div>
       </div>
       {/* Filters */}
       <UserFilters search={search} setSearch={setSearch} role={role} setRole={setRole} status={status} setStatus={setStatus} />
@@ -157,14 +199,58 @@ const ManageUsersPage = () => {
       {/* User detail modal */}
       <UserDetailModal user={selectedUser} open={modalOpen} onClose={() => setModalOpen(false)} onAction={handleUserAction} />
 
+
       {/* Add User Floating Button */}
       <button
         className="fixed bottom-8 right-8 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center text-3xl shadow-lg hover:bg-blue-700 z-50"
         onClick={() => setAddModalOpen(true)}
         title="Add User"
+        style={{ right: chatOpen ? '6.5rem' : '2rem', transition: 'right 0.2s' }}
       >
         +
       </button>
+
+      {/* Floating Chatbot Button */}
+      <button
+        className="fixed bottom-8 right-8 z-50 bg-teal-500 hover:bg-teal-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg transition-all duration-200"
+        onClick={() => setChatOpen(o => !o)}
+        aria-label="Open Chatbot"
+        style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}
+      >
+        <FiMessageCircle size={32} />
+      </button>
+
+      {/* Chatbot Modal */}
+      {chatOpen && (
+        <div className="fixed bottom-28 right-8 z-50 w-80 max-w-full bg-white rounded-xl shadow-2xl flex flex-col border border-gray-200 animate-fade-in">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-teal-500 rounded-t-xl">
+            <span className="font-bold text-white text-lg">Smart Tour Chatbot</span>
+            <button className="text-white text-2xl" onClick={() => setChatOpen(false)}>&times;</button>
+          </div>
+          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-gray-50" style={{ minHeight: 220, maxHeight: 320 }}>
+            {chatMessages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.sender === 'bot' ? 'justify-start' : 'justify-end'}`}>
+                <div className={`rounded-lg px-3 py-2 text-sm max-w-[80%] ${msg.sender === 'bot' ? 'bg-teal-100 text-gray-800' : 'bg-teal-500 text-white'}`}>{msg.text}</div>
+              </div>
+            ))}
+            {chatLoading && <div className="text-xs text-gray-400">Typing...</div>}
+            <div ref={chatEndRef} />
+          </div>
+          <form className="flex items-center border-t border-gray-200 px-2 py-2 bg-white rounded-b-xl" onSubmit={handleChatSend}>
+            <input
+              className="flex-1 px-3 py-2 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm"
+              placeholder="Type your message..."
+              value={chatInput}
+              onChange={e => setChatInput(e.target.value)}
+              disabled={chatLoading}
+              autoFocus
+            />
+            <button type="submit" className="ml-2 bg-teal-500 hover:bg-teal-600 text-white rounded-full p-2 transition-colors" disabled={chatLoading || !chatInput.trim()}>
+              <FiSend size={20} />
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Add User Modal */}
       {addModalOpen && (

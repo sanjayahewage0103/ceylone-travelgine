@@ -1,3 +1,31 @@
+// Product statistics for dashboard
+const Product = require('../models/product.model');
+const getProductStats = async (req, res) => {
+  try {
+    // Count by approval status
+    const statusCounts = await Product.aggregate([
+      { $group: { _id: '$isApproved', count: { $sum: 1 } } }
+    ]);
+    // Count by category (approved only)
+    const categoryCounts = await Product.aggregate([
+      { $match: { isApproved: 'approved' } },
+      { $group: { _id: '$category', count: { $sum: 1 } } }
+    ]);
+    // Count by active/inactive (approved only)
+    const activeCounts = await Product.aggregate([
+      { $match: { isApproved: 'approved' } },
+      { $group: { _id: '$isActive', count: { $sum: 1 } } }
+    ]);
+    res.json({
+      statusCounts,
+      categoryCounts,
+      activeCounts
+    });
+  } catch (err) {
+    console.error('getProductStats error:', err);
+    res.status(500).json({ message: err.message, stack: err.stack });
+  }
+};
 // Get all products (approved, rejected, pending)
 const getAllProducts = async (req, res) => {
   try {
@@ -13,7 +41,7 @@ const getAllProducts = async (req, res) => {
     res.status(500).json({ message: err.message, stack: err.stack });
   }
 };
-const Product = require('../models/product.model');
+
 
 // Get all pending products with optional search/filter
 const getPendingProducts = async (req, res) => {
@@ -166,4 +194,5 @@ module.exports = {
   getPendingProducts,
   setProductApproval,
   getAllProducts,
+  getProductStats,
 };

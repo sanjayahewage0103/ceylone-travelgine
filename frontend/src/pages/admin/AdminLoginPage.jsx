@@ -21,6 +21,12 @@ const AdminLoginPage = () => {
     try {
       const result = await authService.login(email, password);
       if (result.token && result.user && result.user.role === 'admin') {
+        // Store token for adminService usage
+        if (rememberMe) {
+          localStorage.setItem('token', result.token);
+        } else {
+          sessionStorage.setItem('token', result.token);
+        }
         setSuccess('Login successful!');
         setTimeout(() => {
           navigate('/admin/dashboard'); // Redirect after successful login
