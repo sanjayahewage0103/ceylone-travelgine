@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MainNavbar from '../components/common/MainNavbar';
+import Footer from '../components/common/Footer';
 
 const HomePage = () => {
   return (
@@ -163,6 +164,9 @@ const HomePage = () => {
 
       {/* Sixth Section: Travelgine for Business */}
       <BusinessSection />
+      
+      {/* Footer */}
+      <Footer />
     </>
   );
 }
