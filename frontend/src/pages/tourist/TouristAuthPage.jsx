@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Register from '../../components/tourist/Register';
 import TouristLogin from '../../components/tourist/TouristLogin';
+import LoginLayout from '../../components/auth/LoginLayout';
 import authService from '../../services/authService';
 
 const TouristAuthPage = () => {
@@ -38,23 +39,64 @@ const TouristAuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-8 bg-white rounded shadow">
-        {view === 'register' ? (
-          <Register onSwitchToLogin={() => setView('login')} />
-        ) : (
-          <>
-            <TouristLogin
-              onLogin={handleLogin}
-              loading={loading}
-              error={error}
-              onSwitchToRegister={() => setView('register')}
-            />
-            {success && <div className="text-green-600 text-center mt-4">{success}</div>}
-          </>
-        )}
+    <LoginLayout
+      userType="tourist"
+      title="Tourist Account"
+      subtitle="Access exclusive travel experiences tailored to your interests"
+    >
+      <div className="p-8">
+        <div className="mb-6 flex justify-between border-b border-white/20 pb-4">
+          <button 
+            onClick={() => setView('register')} 
+            className={`text-lg font-medium pb-2 px-4 ${view === 'register' 
+              ? 'text-teal-300 border-b-2 border-teal-400' 
+              : 'text-white/70 hover:text-white'}`}
+          >
+            Register
+          </button>
+          <button 
+            onClick={() => setView('login')} 
+            className={`text-lg font-medium pb-2 px-4 ${view === 'login' 
+              ? 'text-teal-300 border-b-2 border-teal-400' 
+              : 'text-white/70 hover:text-white'}`}
+          >
+            Login
+          </button>
+        </div>
+
+        <div className="animate-fadeIn">
+          {view === 'register' ? (
+            <Register onSwitchToLogin={() => setView('login')} />
+          ) : (
+            <>
+              <TouristLogin
+                onLogin={handleLogin}
+                loading={loading}
+                error={error}
+                onSwitchToRegister={() => setView('register')}
+              />
+              {success && (
+                <div className="mt-4 p-3 bg-green-500/20 border border-green-400/30 rounded-lg text-green-300 text-center">
+                  {success}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+        
+        <div className="mt-8 text-center text-white/70">
+          <p>Looking for business opportunities?</p>
+          <div className="flex justify-center gap-4 mt-2">
+            <Link to="/guide" className="text-teal-300 hover:text-teal-200 transition-colors">
+              Join as Guide
+            </Link>
+            <Link to="/vendor" className="text-teal-300 hover:text-teal-200 transition-colors">
+              Join as Vendor
+            </Link>
+          </div>
+        </div>
       </div>
-    </div>
+    </LoginLayout>
   );
 };
 
