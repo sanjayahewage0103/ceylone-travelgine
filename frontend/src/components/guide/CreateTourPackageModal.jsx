@@ -43,6 +43,8 @@ const CreateTourPackageModal = ({ isOpen, onClose, guideId, token, onCreated }) 
 
   if (!isOpen) return null;
 
+  // Responsive modal style
+  const modalClass = "bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xl relative overflow-y-auto max-h-[90vh] md:p-8";
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -167,44 +169,43 @@ const CreateTourPackageModal = ({ isOpen, onClose, guideId, token, onCreated }) 
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-xl relative">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-2 md:px-0">
+      <div className={modalClass}>
         <button className="absolute top-2 right-2 text-gray-500" onClick={onClose}>×</button>
         <h2 className="text-2xl font-bold mb-4">Create Tour Package</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
-          <input name="package_name" value={form.package_name} onChange={handleChange} placeholder="Package Name" className="w-full border p-2 rounded" required />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input name="package_name" value={form.package_name} onChange={handleChange} placeholder="Package Name" className="w-full border p-2 rounded" required />
+            <input name="price_lkr" value={form.price_lkr} onChange={handleChange} placeholder="Price (LKR)" type="number" className="w-full border p-2 rounded" required />
+            <select name="tourType" value={form.tourType} onChange={handleChange} className="w-full border p-2 rounded" required>
+              <option value="">Select Tour Type</option>
+              {TOUR_TYPE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+            </select>
+            <select name="tourCategory" value={form.tourCategory} onChange={handleChange} className="w-full border p-2 rounded" required>
+              <option value="">Select Tour Category</option>
+              {TOUR_CATEGORY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+            </select>
+            <select name="duration" value={form.duration} onChange={handleDurationChange} className="w-full border p-2 rounded" required>
+              <option value="">Select Duration</option>
+              {DURATION_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+            </select>
+            <input name="max_group_size" value={form.max_group_size} onChange={handleChange} placeholder="Max Group Size" type="number" className="w-full border p-2 rounded" required />
+          </div>
           <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="w-full border p-2 rounded" required />
-          {/* Tour Type dropdown */}
-          <select name="tourType" value={form.tourType} onChange={handleChange} className="w-full border p-2 rounded" required>
-            <option value="">Select Tour Type</option>
-            {TOUR_TYPE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-          </select>
-          {/* Tour Category dropdown */}
-          <select name="tourCategory" value={form.tourCategory} onChange={handleChange} className="w-full border p-2 rounded" required>
-            <option value="">Select Tour Category</option>
-            {TOUR_CATEGORY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-          </select>
-          {/* Duration dropdown */}
-          <select name="duration" value={form.duration} onChange={handleDurationChange} className="w-full border p-2 rounded" required>
-            <option value="">Select Duration</option>
-            {DURATION_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-          </select>
-          <input name="max_group_size" value={form.max_group_size} onChange={handleChange} placeholder="Max Group Size" type="number" className="w-full border p-2 rounded" required />
-          <input name="price_lkr" value={form.price_lkr} onChange={handleChange} placeholder="Price (LKR)" type="number" className="w-full border p-2 rounded" required />
 
           {/* Dynamic Itinerary fields: days and stops */}
           {itinerary.length > 0 && <div>
             <div className="font-semibold mb-1">Itinerary (up to 10 days, 10 stops per day)</div>
             {itinerary.map((day, dayIdx) => (
-              <div key={dayIdx} className="mb-4 border rounded p-2">
-                <div className="flex items-center mb-2">
+              <div key={dayIdx} className="mb-4 border rounded p-2 bg-gray-50 flex flex-col gap-2">
+                <div className="flex flex-col sm:flex-row items-center mb-2 gap-2">
                   <div className="font-medium flex-1">Day {day.day}</div>
                   {itinerary.length > 1 && (
                     <button type="button" onClick={() => handleRemoveDay(dayIdx)} className="text-red-500 text-lg ml-2">× Remove Day</button>
                   )}
                 </div>
                 {day.stops.map((stop, stopIdx) => (
-                  <div key={stopIdx} className="flex gap-2 items-end mb-2">
+                  <div key={stopIdx} className="flex flex-col sm:flex-row gap-2 items-end mb-2">
                     <input
                       type="text"
                       placeholder="Stop/Location"
@@ -244,7 +245,7 @@ const CreateTourPackageModal = ({ isOpen, onClose, guideId, token, onCreated }) 
           {/* Inclusions add-one-by-one */}
           <div>
             <div className="font-semibold mb-1">Inclusions</div>
-            <div className="flex gap-2 mb-1">
+            <div className="flex flex-col sm:flex-row gap-2 mb-1">
               <input
                 type="text"
                 value={inclusionInput}
@@ -268,7 +269,7 @@ const CreateTourPackageModal = ({ isOpen, onClose, guideId, token, onCreated }) 
           {/* Availability: calendar date picker (simple input type=date, add to list) */}
           <div>
             <div className="font-semibold mb-1">Availability Dates</div>
-            <div className="flex gap-2 mb-1">
+            <div className="flex flex-col sm:flex-row gap-2 mb-1">
               <input type="date" id="avail-date" className="border p-1 rounded" />
               <button type="button" onClick={() => {
                 const date = document.getElementById('avail-date').value;
@@ -288,7 +289,7 @@ const CreateTourPackageModal = ({ isOpen, onClose, guideId, token, onCreated }) 
           {/* Languages add-one-by-one */}
           <div>
             <div className="font-semibold mb-1">Languages</div>
-            <div className="flex gap-2 mb-1">
+            <div className="flex flex-col sm:flex-row gap-2 mb-1">
               <input
                 type="text"
                 value={languageInput}
@@ -309,7 +310,7 @@ const CreateTourPackageModal = ({ isOpen, onClose, guideId, token, onCreated }) 
 
           <input type="file" multiple accept="image/*" onChange={handleImageChange} className="w-full border p-2 rounded" />
           {error && <div className="text-red-500">{error}</div>}
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded" disabled={loading}>{loading ? 'Creating...' : 'Create Package'}</button>
+          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded w-full mt-2" disabled={loading}>{loading ? 'Creating...' : 'Create Package'}</button>
         </form>
       </div>
     </div>

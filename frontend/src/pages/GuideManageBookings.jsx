@@ -74,58 +74,80 @@ export default function GuideManageBookings() {
     setShowDetail(true);
   };
 
+  // Glassmorphism and background
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Booking Queue</h1>
-      <div className="flex gap-4 mb-4">
-        <select value={status} onChange={e => setStatus(e.target.value)} className="border rounded px-2 py-1">
-          <option value="">All Statuses</option>
-          <option value="Pending">Pending</option>
-          <option value="Approved">Approved</option>
-          <option value="Declined">Declined</option>
-        </select>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tourist..." className="border rounded px-2 py-1" />
+    <div
+      className="min-h-screen flex"
+      style={{
+        background: `linear-gradient(120deg, rgba(0,212,255,0.13) 0%, rgba(9,121,113,0.10) 100%), url('/Ceylon.png') center/cover no-repeat fixed`,
+        backgroundBlendMode: 'overlay',
+      }}
+    >
+      <div className="hidden md:block">
+        {/* Sidebar is rendered in layout, or add here if needed */}
       </div>
-      <div className="bg-slate-800 rounded-lg overflow-x-auto">
-        <table className="min-w-full text-sm text-left text-white">
-          <thead>
-            <tr className="bg-slate-900">
-              <th className="px-4 py-2">ID</th>
-              <th className="px-4 py-2">Tourist</th>
-              <th className="px-4 py-2">Package</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Pax</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={7} className="text-center py-8 text-gray-400">Loading...</td></tr>
-            ) : bookings.length === 0 ? (
-              <tr><td colSpan={7} className="text-center py-8 text-gray-400">No bookings found.</td></tr>
-            ) : bookings.map(b => (
-              <tr key={b._id} className="border-b border-slate-700 hover:bg-slate-700 cursor-pointer">
-                <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b._id.slice(-6).toUpperCase()}</td>
-                <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b.user?.name || b.user?.email || 'Unknown'}</td>
-                <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b.tourPackage?.package_name}</td>
-                <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b.date?.slice(0,10)}</td>
-                <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b.peopleCount}</td>
-                <td className="px-4 py-2">
-                  <span className={`px-2 py-1 rounded text-xs font-semibold ${STATUS_COLORS[b.status] || ''}`}>{b.status}</span>
-                </td>
-                <td className="px-4 py-2 flex gap-2">
-                  {(b.status === 'Pending' || b.status === 'pending') && <>
-                    <button className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded" onClick={() => handleStatus(b._id, 'Approved')}>Approve</button>
-                    <button className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded" onClick={() => handleStatus(b._id, 'Declined')}>Decline</button>
-                  </>}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <BookingDetailModal open={showDetail} booking={detail} onClose={() => setShowDetail(false)} />
+      <main className="flex-1 flex flex-col items-center justify-start p-6">
+        <div className="w-full max-w-5xl">
+          <h1 className="text-2xl font-bold mb-4 text-cyan-900 drop-shadow">Booking Queue</h1>
+          <div className="flex gap-4 mb-4">
+            <select value={status} onChange={e => setStatus(e.target.value)} className="border rounded px-2 py-1">
+              <option value="">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Declined">Declined</option>
+            </select>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tourist..." className="border rounded px-2 py-1" />
+          </div>
+          <div className="rounded-3xl shadow-2xl overflow-hidden relative backdrop-blur-xl bg-white/70 border border-white/30">
+            <table className="min-w-full text-sm text-left text-cyan-900">
+              <thead>
+                <tr className="bg-cyan-100/80">
+                  <th className="px-4 py-2">ID</th>
+                  <th className="px-4 py-2">Tourist</th>
+                  <th className="px-4 py-2">Package</th>
+                  <th className="px-4 py-2">Date</th>
+                  <th className="px-4 py-2">Pax</th>
+                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">Stars</th>
+                  <th className="px-4 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan={8} className="text-center py-8 text-gray-400">Loading...</td></tr>
+                ) : bookings.length === 0 ? (
+                  <tr><td colSpan={8} className="text-center py-8 text-gray-400">No bookings found.</td></tr>
+                ) : bookings.map(b => (
+                  <tr key={b._id} className="border-b border-cyan-100 hover:bg-cyan-50/60 cursor-pointer">
+                    <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b._id.slice(-6).toUpperCase()}</td>
+                    <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b.user?.name || b.user?.email || 'Unknown'}</td>
+                    <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b.tourPackage?.package_name}</td>
+                    <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b.date?.slice(0,10)}</td>
+                    <td className="px-4 py-2" onClick={() => handleView(b._id)}>{b.peopleCount}</td>
+                    <td className="px-4 py-2">
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${STATUS_COLORS[b.status] || ''}`}>{b.status}</span>
+                    </td>
+                    <td className="px-4 py-2">
+                      {b.stars ? (
+                        <span className="text-yellow-500 text-lg">{'★'.repeat(Math.round(b.stars))}</span>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2 flex gap-2">
+                      {(b.status === 'Pending' || b.status === 'pending') && <>
+                        <button className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded" onClick={() => handleStatus(b._id, 'Approved')}>Approve</button>
+                        <button className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded" onClick={() => handleStatus(b._id, 'Declined')}>Decline</button>
+                      </>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <BookingDetailModal open={showDetail} booking={detail} onClose={() => setShowDetail(false)} />
+        </div>
+      </main>
     </div>
   );
 }

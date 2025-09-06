@@ -1,5 +1,4 @@
 import BusinessNavbar from '../../components/common/BusinessNavbar';
-import VendorSidebar from '../../components/vendor/VendorSidebar';
 import React, { useState, useMemo } from 'react';
 import Select from 'react-select';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -92,7 +91,6 @@ const VendorAIForecastPage = () => {
         <>
             <BusinessNavbar />
             <div className="flex min-h-screen">
-                <VendorSidebar />
                 <div className="flex-1 p-4 md:p-8 bg-gray-100 font-sans">
                     <header className="mb-8">
                         <h1 className="text-3xl font-bold text-gray-800">AI Demand Forecast</h1>

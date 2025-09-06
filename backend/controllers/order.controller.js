@@ -52,6 +52,20 @@ exports.checkout = async (req, res) => {
     let encryptedCard = '';
     if (paymentMethod === 'Card' && cardDetails) {
       encryptedCard = encrypt(JSON.stringify(cardDetails));
+      // DEMO PAYMENT GATEWAY
+      const axios = require('axios');
+      try {
+        const payRes = await axios.post(
+          process.env.DEMO_PAYMENT_URL || 'http://localhost:5000/api/demo-payment/pay',
+          { amount: totalAmount, cardDetails },
+          { timeout: 5000 }
+        );
+        if (!payRes.data || payRes.data.status !== 'success') {
+          return res.status(402).json({ error: 'Payment failed. Please try again.' });
+        }
+      } catch (err) {
+        return res.status(402).json({ error: 'Payment failed. Please try again.' });
+      }
     }
     // Create order
     const order = new Order({

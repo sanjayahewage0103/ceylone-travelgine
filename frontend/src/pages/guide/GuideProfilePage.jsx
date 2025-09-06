@@ -144,7 +144,6 @@ const GuideProfilePage = () => {
   const guideProfile = profile.guideProfile;
   const user = profile;
 
-
   // Build key insights from analytics
   let keyInsights = [
     { label: 'Total Trips', value: analytics?.completedTrips ?? '-' },
@@ -187,36 +186,51 @@ const GuideProfilePage = () => {
     morePending = analytics.pendingBookings.length - 3;
   }
 
+  // Example background image (replace with your own or fetch from backend if available)
+  const backgroundImage = '/Ceylon.png';
+
   return (
-    <>
-      <BusinessNavbar />
-      <div className="flex min-h-screen bg-[#1a2236]">
-        <GuideSidebar />
-        <main className="flex-1 p-8">
+    <div
+      className="flex min-h-screen"
+      style={{
+        background: `linear-gradient(120deg, rgba(0,212,255,0.10) 0%, rgba(9,121,113,0.10) 100%), url('${backgroundImage}') center/cover no-repeat fixed`,
+        backgroundBlendMode: 'overlay',
+      }}
+    >
+      <GuideSidebar />
+      <main className="flex-1 p-8">
         {/* Banner */}
-        <BannerUploader
-          imageUrl={getImageUrl(guideProfile.files?.profileBanner)}
-          onChange={handleBannerChange}
-          label="Banner"
-          editable={true}
-        />
-        {/* Profile & Key Insights */}
-        <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
-          <div className="flex flex-col items-center md:items-start md:flex-row md:mr-8">
+        <div className="rounded-3xl shadow-2xl overflow-hidden relative backdrop-blur-xl bg-white/70 border border-white/30 mb-8">
+          <BannerUploader
+            imageUrl={getImageUrl(guideProfile.files?.profileBanner)}
+            onChange={handleBannerChange}
+            label="Banner"
+            editable={true}
+          />
+          <div className="flex flex-col md:flex-row items-center md:items-start p-8">
             <ProfilePictureUploader
               imageUrl={getImageUrl(guideProfile.files?.profilePicUrl)}
               onChange={handleProfilePicChange}
               label="Profile Picture"
               editable={true}
             />
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-1">{user.fullName}</h2>
-              <div className="text-gray-300 mb-1">{guideProfile.bio}</div>
-              <div className="text-gray-400 text-sm mb-1">SLTDA: {guideProfile.sltdaRegNum} <span className="ml-2">Languages: {guideProfile.languagesSpoken?.join(', ')}</span> <span className="ml-2">Experience: {guideProfile.experienceYears} Years</span></div>
-              <div className="text-cyan-300 text-xs mb-1">Specialities: {guideProfile.tourTypesOffered?.join(', ')}</div>
+            <div className="ml-0 md:ml-8 mt-4 md:mt-0">
+              <h2 className="text-3xl font-extrabold text-cyan-900 mb-1 drop-shadow">{user.fullName}</h2>
+              <div className="text-cyan-700 font-medium mb-2 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 bg-cyan-400 rounded-full"></span>
+                {guideProfile.location}
+              </div>
+              <div className="text-gray-700 mb-4 max-w-xl font-medium italic">{guideProfile.bio}</div>
+              <div className="flex flex-wrap gap-2 text-xs text-cyan-800/80 mb-2">
+                {guideProfile.languagesSpoken && guideProfile.languagesSpoken.map((lang, i) => <span key={i} className="bg-cyan-100 px-2 py-1 rounded-full shadow-sm border border-cyan-200">{lang}</span>)}
+              </div>
+              <div className="text-sm text-gray-500">Contact: <span className="font-semibold text-cyan-700">{user.contact}</span></div>
+              <div className="text-cyan-300 text-xs mb-1 mt-2">Specialities: {guideProfile.tourTypesOffered?.join(', ')}</div>
+              <div className="text-gray-400 text-sm mb-1">SLTDA: {guideProfile.sltdaRegNum} <span className="ml-2">Experience: {guideProfile.experienceYears} Years</span></div>
             </div>
+            <button className="ml-auto bg-cyan-600 text-white px-4 py-2 rounded font-semibold shadow hover:bg-cyan-700 transition" onClick={handleEditClick}>Manage Profile</button>
           </div>
-          <button className="ml-auto bg-gray-700 text-white px-4 py-2 rounded font-semibold shadow" onClick={handleEditClick}>Manage Profile</button>
+        </div>
         <Modal
           isOpen={editOpen}
           onRequestClose={() => setEditOpen(false)}
@@ -263,16 +277,15 @@ const GuideProfilePage = () => {
             </div>
           </form>
         </Modal>
-        </div>
         {/* Key Insights */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           {analyticsLoading ? (
-            <div className="col-span-5 text-center text-white">Loading analytics...</div>
+            <div className="col-span-5 text-center text-cyan-700">Loading analytics...</div>
           ) : analyticsError ? (
             <div className="col-span-5 text-center text-red-400">{analyticsError}</div>
           ) : (
             keyInsights.map((insight, i) => (
-              <div key={i} className={`rounded-xl p-4 shadow text-center ${insight.highlight ? 'bg-[#222e50] text-cyan-300 font-bold' : 'bg-[#222e50] text-white'} ${insight.weather ? 'flex flex-col justify-center items-center' : ''}`}>
+              <div key={i} className={`rounded-xl p-4 shadow text-center ${insight.highlight ? 'bg-gradient-to-r from-cyan-200 to-green-200 text-cyan-900 font-bold' : 'bg-white/80 text-cyan-900'} ${insight.weather ? 'flex flex-col justify-center items-center' : ''}`}>
                 <div className="text-lg font-semibold">{insight.label}</div>
                 <div className="text-2xl mt-2">{insight.value}</div>
               </div>
@@ -281,32 +294,32 @@ const GuideProfilePage = () => {
         </div>
         {/* Revenue Chart & Event Calendar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="md:col-span-2 bg-[#222e50] rounded-xl p-6 shadow">
-            <h3 className="text-lg font-bold text-white mb-4">Last 6 Months Revenue</h3>
+          <div className="md:col-span-2 bg-white/80 rounded-xl p-6 shadow">
+            <h3 className="text-lg font-bold text-cyan-900 mb-4">Last 6 Months Revenue</h3>
             <div className="w-full h-48 flex items-end gap-4">
               {revenueData.length === 0 ? (
-                <div className="text-white">No revenue data</div>
+                <div className="text-cyan-700">No revenue data</div>
               ) : (
                 revenueData.map((d, i) => (
                   <div key={i} className="flex flex-col items-center justify-end h-full">
-                    <div className="w-10 bg-cyan-400 rounded-t" style={{ height: `${d.value / 60}px` }}></div>
-                    <div className="text-xs text-gray-300 mt-2">{d.month}</div>
+                    <div className="w-10 bg-gradient-to-t from-cyan-400 to-green-300 rounded-t" style={{ height: `${d.value / 60}px` }}></div>
+                    <div className="text-xs text-cyan-700 mt-2">{d.month}</div>
                   </div>
                 ))
               )}
             </div>
           </div>
-          <div className="bg-[#222e50] rounded-xl p-6 shadow">
-            <h3 className="text-lg font-bold text-white mb-4">Event Calendar</h3>
+          <div className="bg-white/80 rounded-xl p-6 shadow">
+            <h3 className="text-lg font-bold text-cyan-900 mb-4">Event Calendar</h3>
             <ul className="space-y-3">
               {eventCalendar.length === 0 ? (
-                <li className="text-white">No events</li>
+                <li className="text-cyan-700">No events</li>
               ) : (
                 eventCalendar.map((event, i) => (
-                  <li key={i} className="bg-[#1a2236] rounded p-3 text-white flex flex-col">
-                    <span className="font-bold text-cyan-300">{event.date}</span>
+                  <li key={i} className="bg-gradient-to-r from-cyan-100 to-green-100 rounded p-3 text-cyan-900 flex flex-col">
+                    <span className="font-bold text-cyan-700">{event.date}</span>
                     <span>{event.name}</span>
-                    <span className="text-xs text-gray-400">{event.note}</span>
+                    <span className="text-xs text-cyan-600">{event.note}</span>
                   </li>
                 ))
               )}
@@ -314,11 +327,11 @@ const GuideProfilePage = () => {
           </div>
         </div>
         {/* Pending Booking Requests */}
-        <div className="bg-[#222e50] rounded-xl p-6 shadow">
-          <h3 className="text-lg font-bold text-white mb-4">Pending Booking Requests</h3>
-          <table className="w-full text-sm text-white">
+        <div className="bg-white/80 rounded-xl p-6 shadow">
+          <h3 className="text-lg font-bold text-cyan-900 mb-4">Pending Booking Requests</h3>
+          <table className="w-full text-sm text-cyan-900">
             <thead>
-              <tr className="text-cyan-300">
+              <tr className="text-cyan-700">
                 <th className="px-4 py-2 text-left">Tourist</th>
                 <th className="px-4 py-2 text-left">Package</th>
                 <th className="px-4 py-2 text-left">Date</th>
@@ -328,10 +341,10 @@ const GuideProfilePage = () => {
             </thead>
             <tbody>
               {bookingRequests.length === 0 ? (
-                <tr><td colSpan="5" className="text-center text-white">No pending requests</td></tr>
+                <tr><td colSpan="5" className="text-center text-cyan-700">No pending requests</td></tr>
               ) : (
                 bookingRequests.map((req, i) => (
-                  <tr key={i} className="border-b border-gray-700">
+                  <tr key={i} className="border-b border-cyan-100">
                     <td className="px-4 py-2">{req.tourist}</td>
                     <td className="px-4 py-2">{req.package}</td>
                     <td className="px-4 py-2">{req.date}</td>
@@ -344,14 +357,13 @@ const GuideProfilePage = () => {
                 ))
               )}
               {morePending > 0 && (
-                <tr><td colSpan="5" className="text-center text-cyan-300">+{morePending} more pending requests</td></tr>
+                <tr><td colSpan="5" className="text-center text-cyan-700">+{morePending} more pending requests</td></tr>
               )}
             </tbody>
           </table>
         </div>
-        </main>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }
 

@@ -93,37 +93,44 @@ const GuideCalendarNotes = () => {
     .slice(0, 4);
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-white">
+    <div
+      className="flex min-h-screen text-cyan-900"
+      style={{
+        background: `linear-gradient(120deg, rgba(0,212,255,0.13) 0%, rgba(9,121,113,0.10) 100%), url('/Ceylon.png') center/cover no-repeat fixed`,
+        backgroundBlendMode: 'overlay',
+      }}
+    >
       <GuideSidebar />
       <div className="flex-1 flex flex-col md:flex-row gap-8 p-6">
         <div className="w-full md:w-2/3">
           <h2 className="text-2xl font-bold mb-4">My Bookings Calendar</h2>
-          <Calendar
-            onChange={setSelectedDate}
-            value={selectedDate}
-            tileContent={tileContent}
-            calendarType="gregory"
-          />
-
+          <div className="rounded-3xl shadow-2xl overflow-hidden relative backdrop-blur-xl bg-white/70 border border-white/30 p-4">
+            <Calendar
+              onChange={setSelectedDate}
+              value={selectedDate}
+              tileContent={tileContent}
+              calendarType="gregory"
+            />
+          </div>
           {/* Upcoming Trips Section */}
-          <div className="mt-8 bg-gray-800 rounded-lg p-4 shadow">
+          <div className="mt-8 rounded-2xl shadow-xl bg-white/80 p-4">
             <h3 className="text-lg font-semibold mb-4">Upcoming {upcoming.length} Trip{upcoming.length !== 1 ? 's' : ''}</h3>
             {upcoming.length === 0 ? (
               <div className="text-gray-400">No upcoming trips.</div>
             ) : (
               <div className="flex flex-col gap-3">
                 {upcoming.map(b => (
-                  <div key={b._id} className="flex flex-col md:flex-row md:items-center justify-between bg-gray-700 rounded px-4 py-3">
+                  <div key={b._id} className="flex flex-col md:flex-row md:items-center justify-between bg-cyan-50 rounded px-4 py-3">
                     <div>
-                      <div className="font-bold text-base text-white">{b.tourPackage?.name || 'Tour'}</div>
-                      <div className="text-gray-300 text-sm">
+                      <div className="font-bold text-base text-cyan-900">{b.tourPackage?.name || 'Tour'}</div>
+                      <div className="text-cyan-700 text-sm">
                         with {b.user?.name || b.user?.email || 'Tourist'}
                         {b.peopleCount ? ` (${b.peopleCount} people)` : ''}
                       </div>
                     </div>
                     <div className="flex flex-col md:items-end mt-2 md:mt-0">
-                      <div className="font-semibold text-white">{formatDate(b.date)}</div>
-                      <div className="text-green-400 text-xs font-bold mt-1">Approved</div>
+                      <div className="font-semibold text-cyan-900">{formatDate(b.date)}</div>
+                      <div className="text-green-600 text-xs font-bold mt-1">Approved</div>
                     </div>
                   </div>
                 ))}
@@ -132,19 +139,21 @@ const GuideCalendarNotes = () => {
           </div>
         </div>
         <div className="w-full md:w-1/3 mt-8 md:mt-0">
-          <h2 className="text-xl font-semibold mb-2">Notes / Todo for {formatDate(selectedDate)}</h2>
-          <textarea
-            className="w-full h-40 p-2 rounded bg-gray-800 text-white border border-gray-700"
-            value={todo}
-            onChange={e => setTodo(e.target.value)}
-            placeholder="Write your notes or todos for this day..."
-          />
-          <button
-            className="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white"
-            onClick={handleSave}
-          >
-            Save Note
-          </button>
+          <div className="rounded-2xl shadow-xl bg-white/80 p-4">
+            <h2 className="text-xl font-semibold mb-2">Notes / Todo for {formatDate(selectedDate)}</h2>
+            <textarea
+              className="w-full h-40 p-2 rounded bg-cyan-50 text-cyan-900 border border-cyan-200"
+              value={todo}
+              onChange={e => setTodo(e.target.value)}
+              placeholder="Write your notes or todos for this day..."
+            />
+            <button
+              className="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white"
+              onClick={handleSave}
+            >
+              Save Note
+            </button>
+          </div>
         </div>
       </div>
     </div>

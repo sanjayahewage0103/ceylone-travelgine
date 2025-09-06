@@ -89,8 +89,8 @@ const TourPackageModal = ({ pkg, onClose, onSaved }) => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl relative">
+      <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-2 md:px-0">
+        <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl relative md:p-8">
           <div>Loading...</div>
         </div>
       </div>
@@ -98,8 +98,8 @@ const TourPackageModal = ({ pkg, onClose, onSaved }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl relative overflow-y-auto max-h-[90vh]">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-2 md:px-0">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl relative overflow-y-auto max-h-[90vh] md:p-8">
         <button className="absolute top-2 right-2 text-gray-500" onClick={onClose}>×</button>
         <h2 className="text-2xl font-bold mb-4">Edit Tour Package</h2>
         {/* Image slider */}
@@ -137,7 +137,7 @@ const TourPackageModal = ({ pkg, onClose, onSaved }) => {
             </div>
           )}
           <input type="file" multiple accept="image/*" onChange={handleImageChange} className="w-full border p-2 rounded" />
-          {newImages.length > 0 && <div className="flex gap-2 mt-2">{newImages.map((file, idx) => <span key={idx} className="text-xs bg-cyan-100 px-2 py-1 rounded">{file.name}</span>)}</div>}
+          {newImages.length > 0 && <div className="flex gap-2 mt-2 flex-wrap">{newImages.map((file, idx) => <span key={idx} className="text-xs bg-cyan-100 px-2 py-1 rounded">{file.name}</span>)}</div>}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -216,7 +216,7 @@ const TourPackageModal = ({ pkg, onClose, onSaved }) => {
             <div className="space-y-4">
               {(form.itinerary || []).map((day, dayIdx) => (
                 <div key={dayIdx} className="border rounded p-3 bg-gray-50">
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex flex-col sm:flex-row items-center gap-2 mb-2">
                     <input
                       className="font-semibold text-base border-b border-gray-300 flex-1 bg-transparent focus:outline-none"
                       value={day.dayTitle || ''}
@@ -239,7 +239,7 @@ const TourPackageModal = ({ pkg, onClose, onSaved }) => {
                   </div>
                   <div className="space-y-2">
                     {(day.stops || []).map((stop, stopIdx) => (
-                      <div key={stopIdx} className="flex items-center gap-2">
+                      <div key={stopIdx} className="flex flex-col sm:flex-row items-center gap-2">
                         <input
                           className="border-b border-gray-300 flex-1 bg-transparent focus:outline-none"
                           value={stop.stop || ''}
@@ -285,7 +285,8 @@ const TourPackageModal = ({ pkg, onClose, onSaved }) => {
               ))}
               <button
                 className="text-sm text-green-700 hover:underline"
-                onClick={() => {
+                onClick={e => {
+                  e.preventDefault();
                   const newItin = [...(form.itinerary || [])];
                   newItin.push({ dayTitle: '', stops: [''] });
                   setForm(f => ({ ...f, itinerary: newItin }));
@@ -296,9 +297,9 @@ const TourPackageModal = ({ pkg, onClose, onSaved }) => {
           </div>
         </div>
         {error && <div className="text-red-500 mt-2">{error}</div>}
-        <div className="flex justify-end mt-4 gap-2">
-          <button className="bg-gray-200 px-4 py-2 rounded" onClick={onClose}>Cancel</button>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
+        <div className="flex flex-col sm:flex-row justify-end mt-4 gap-2">
+          <button className="bg-gray-200 px-4 py-2 rounded w-full sm:w-auto" onClick={onClose}>Cancel</button>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded w-full sm:w-auto" onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
         </div>
       </div>
     </div>

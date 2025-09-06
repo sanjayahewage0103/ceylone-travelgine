@@ -35,7 +35,7 @@ const CartSummary = () => {
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
             : 'bg-gradient-to-r from-green-600 to-teal-500 hover:from-green-700 hover:to-teal-600 text-white hover:shadow-lg hover:-translate-y-1'
           }`}
-        onClick={() => navigate('/marketplace/checkout')}
+        onClick={() => navigate('/checkout')}
         disabled={cart.items.length === 0}
       >
         Proceed to Checkout →

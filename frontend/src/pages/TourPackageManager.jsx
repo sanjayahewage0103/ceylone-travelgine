@@ -31,25 +31,36 @@ const TourPackageManager = () => {
   const guideId = window.localStorage.getItem('guideId');
   const token = window.localStorage.getItem('token');
 
+  // Example background image (replace with your own or fetch from backend if available)
+  const backgroundImage = '/public/3.jpg';
+
   return (
-    <div className="flex min-h-screen">
+    <div
+      className="min-h-screen flex"
+      style={{
+        background: `linear-gradient(120deg, rgba(0,212,255,0.10) 0%, rgba(9,121,113,0.10) 100%), url('${backgroundImage}') center/cover no-repeat fixed`,
+        backgroundBlendMode: 'overlay',
+      }}
+    >
       <GuideSidebar />
-      <div className="flex-1 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">Manage My Tour Packages</h1>
-          <button
-            className="bg-cyan-700 text-white px-4 py-2 rounded hover:bg-cyan-800"
-            onClick={() => setCreateOpen(true)}
-          >
-            + Add New Tour
-          </button>
-        </div>
-        {loading && <div>Loading...</div>}
-        {error && <div className="text-red-500">{error}</div>}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {packages.map(pkg => (
-            <TourPackageCard key={pkg._id} pkg={pkg} onClick={() => setSelected(pkg)} />
-          ))}
+      <div className="flex-1 p-6 flex flex-col">
+        <div className="max-w-6xl mx-auto w-full">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-extrabold text-cyan-900 drop-shadow">Manage My Tour Packages</h1>
+            <button
+              className="bg-gradient-to-r from-cyan-600 to-teal-500 text-white px-6 py-2 rounded-xl font-bold shadow hover:from-cyan-700 hover:to-teal-600 transition-all"
+              onClick={() => setCreateOpen(true)}
+            >
+              + Add New Tour
+            </button>
+          </div>
+          {loading && <div className="text-cyan-700">Loading...</div>}
+          {error && <div className="text-red-500">{error}</div>}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {packages.map(pkg => (
+              <TourPackageCard key={pkg._id} pkg={pkg} onClick={() => setSelected(pkg)} />
+            ))}
+          </div>
         </div>
         {selected && (
           <TourPackageModal

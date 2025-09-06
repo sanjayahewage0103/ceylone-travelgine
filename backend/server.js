@@ -16,8 +16,10 @@ const cartRoutes = require('./routes/cart.routes');
 const orderRoutes = require('./routes/order.routes');
 
 
+
 const blogPostRoutes = require('./routes/blogPost.routes');
 const tourPackageRoutes = require('./routes/tourPackage.routes');
+const demoPaymentRoutes = require('./routes/demoPayment.routes');
 
 dotenv.config();
 const app = express();
@@ -51,6 +53,7 @@ app.use('/api/orders', orderRoutes);
 
 app.use('/api/blog-posts', blogPostRoutes);
 app.use('/api/tour-packages', tourPackageRoutes);
+app.use('/api/demo-payment', demoPaymentRoutes);
 const bookingRoutes = require('./routes/booking.routes');
 app.use('/api/bookings', bookingRoutes);
 

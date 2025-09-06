@@ -41,6 +41,7 @@ import ManageUsersPage from './pages/admin/ManageUsersPage';
 import PendingProductsPage from './pages/admin/PendingProductsPage';
 import ManageProductsPage from './pages/admin/ManageProductsPage';
 import AdminLayout from './layouts/AdminLayout';
+import MainLayout from './layouts/MainLayout';
 
 import GuideManageBookings from './pages/GuideManageBookings';
 import GuideCalendarNotes from './pages/GuideCalendarNotes';
@@ -50,57 +51,65 @@ import SmartItineraryDashboard from './pages/trip/SmartItineraryDashboard';
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/blogs" element={<AllBlogs />} />
-      <Route path="/guide/blogs" element={<GuideBlogs />} />
-      <Route path="/guide/blogs/new" element={<GuideBlogEditor />} />
-      <Route path="/guide/blogs/:id" element={<BlogDetail />} />
-      <Route path="/guide/blogs/edit/:id" element={<GuideBlogEditor editMode={true} />} />
-    <Route path="/blogs/:id" element={<ViewBlogPost />} />
-      <Route path="/admin/login" element={<AdminLoginPage />} />
-      <Route path="/business-intro" element={<BusinessIntro />} />
-      <Route path="/marketplace" element={<MarketplacePage />} />
-      <Route path="/marketplace/products" element={<ProductListPage />} />
-      <Route path="/marketplace/product/:productId" element={<ProductDetailPage />} />
-      <Route path="/marketplace/shops" element={<ShopListPage />} />
-      <Route path="/marketplace/vendor/:vendorId" element={<VendorShopProfilePage />} />
-      <Route path="/cart" element={<CartPage />} />
-      <Route path="/checkout" element={<CheckoutPage />} />
-      <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
-      <Route path="/marketplace/category/:categoryName" element={<CategoryPage />} />
-      {/* Admin routes with sidebar layout */}
+      {/* Main routes with Footer layout */}
+      <Route element={<MainLayout />}>
+        {/* Public pages */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/blogs" element={<AllBlogs />} />
+        <Route path="/blogs/:id" element={<ViewBlogPost />} />
+        <Route path="/business-intro" element={<BusinessIntro />} />
+        <Route path="/marketplace" element={<MarketplacePage />} />
+        <Route path="/marketplace/products" element={<ProductListPage />} />
+        <Route path="/marketplace/product/:productId" element={<ProductDetailPage />} />
+        <Route path="/marketplace/shops" element={<ShopListPage />} />
+        <Route path="/marketplace/vendor/:vendorId" element={<VendorShopProfilePage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+        <Route path="/marketplace/category/:categoryName" element={<CategoryPage />} />
+        <Route path="/tours" element={<AllTours />} />
+        <Route path="/tours/:id" element={<TourPackageDetail />} />
+        <Route path="/guides/:id" element={<GuideProfile />} />
+        <Route path="/smart-itinerary" element={<SmartItineraryDashboard />} />
+        
+        {/* Auth pages */}
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/tourist" element={<TouristAuthPage />} />
+        <Route path="/vendor" element={<VendorAuthPage />} />
+        <Route path="/tourist/login" element={<TouristAuthPage />} />
+        <Route path="/vendor/login" element={<VendorAuthPage />} />
+        <Route path="/guide/login" element={<GuideAuthPage />} />
+        <Route path="/guide" element={<GuideAuthPage />} />
+        
+        {/* Guide pages */}
+        <Route path="/guide/blogs" element={<GuideBlogs />} />
+        <Route path="/guide/blogs/new" element={<GuideBlogEditor />} />
+        <Route path="/guide/blogs/:id" element={<BlogDetail />} />
+        <Route path="/guide/blogs/edit/:id" element={<GuideBlogEditor editMode={true} />} />
+        <Route path="/guide/tour-packages" element={<TourPackageManager />} />
+        <Route path="/guide/profile" element={<GuideProfilePage />} />
+        <Route path="/guide/manage-bookings" element={<GuideManageBookings />} />
+        <Route path="/guide/calendar-notes" element={<GuideCalendarNotes />} />
+        <Route path="/guide/tourist-forecast" element={<TouristForecast />} />
+        
+        {/* Vendor pages */}
+        <Route path="/vendor/dashboard" element={<VendorDashboardPage />} />
+        <Route path="/vendor/orders" element={<VendorOrdersPage />} />
+        <Route path="/vendor/sales-dashboard" element={<VendorSalesDashboardPage />} />
+        <Route path="/vendor/ai-forecast" element={<VendorAIForecastPage />} />
+        
+        {/* Tourist pages */}
+        <Route path="/tourist/my-orders" element={<TouristOrdersPage />} />
+        <Route path="/tourist/my-orders/:orderId" element={<TouristOrderDetailPage />} />
+        <Route path="/tourist/my-tours" element={<TouristMyToursPage />} />
+      </Route>
+      
+      {/* Admin routes with custom sidebar layout */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="users" element={<ManageUsersPage />} />
         <Route path="products/manage" element={<ManageProductsPage />} />
       </Route>
-      {/* Other auth routes */}
-      <Route path="/tourist" element={<TouristAuthPage />} />
-      <Route path="/vendor" element={<VendorAuthPage />} />
-      <Route path="/vendor/dashboard" element={<VendorDashboardPage />} />
-      <Route path="/vendor/orders" element={<VendorOrdersPage />} />
-      <Route path="/vendor/sales-dashboard" element={<VendorSalesDashboardPage />} />
-      <Route path="/vendor/ai-forecast" element={<VendorAIForecastPage />} />
-      {/* <Route path="/vendor/register2" element={<RegisterVendor2 />} /> */}
-      <Route path="/guide" element={<GuideAuthPage />} />
-      <Route path="/guide/tour-packages" element={<TourPackageManager />} />
-      <Route path="/tourist/login" element={<TouristAuthPage />} />
-      <Route path="/vendor/login" element={<VendorAuthPage />} />
-      <Route path="/guide/login" element={<GuideAuthPage />} />
-      <Route path="/guide/profile" element={<GuideProfilePage />} />
-      <Route path="/tours" element={<AllTours />} />
-      <Route path="/tours/:id" element={<TourPackageDetail />} />
-  <Route path="/guide/manage-bookings" element={<GuideManageBookings />} />
-  <Route path="/guide/calendar-notes" element={<GuideCalendarNotes />} />
-  <Route path="/guide/tourist-forecast" element={<TouristForecast />} />
-  {/* Tourist personal orders */}
-  <Route path="/tourist/my-orders" element={<TouristOrdersPage />} />
-  <Route path="/tourist/my-orders/:orderId" element={<TouristOrderDetailPage />} />
-  {/* Tourist my tours */}
-  <Route path="/tourist/my-tours" element={<TouristMyToursPage />} />
-  {/* Public guide profile/portfolio */}
-  <Route path="/guides/:id" element={<GuideProfile />} />
-  <Route path="/smart-itinerary" element={<SmartItineraryDashboard />} />
     </Routes>
   );
 }
