@@ -83,11 +83,10 @@ function App() {
       <Route path="/vendor/ai-forecast" element={<VendorAIForecastPage />} />
       {/* <Route path="/vendor/register2" element={<RegisterVendor2 />} /> */}
       <Route path="/guide" element={<GuideAuthPage />} />
-      <Route path="/guide/register2" element={<GuideRegisterSinglePage />} />
       <Route path="/guide/tour-packages" element={<TourPackageManager />} />
       <Route path="/tourist/login" element={<TouristAuthPage />} />
       <Route path="/vendor/login" element={<VendorAuthPage />} />
-      <Route path="/guide/login" element={<GuideRegisterSinglePage />} />
+      <Route path="/guide/login" element={<GuideAuthPage />} />
       <Route path="/guide/profile" element={<GuideProfilePage />} />
       <Route path="/tours" element={<AllTours />} />
       <Route path="/tours/:id" element={<TourPackageDetail />} />

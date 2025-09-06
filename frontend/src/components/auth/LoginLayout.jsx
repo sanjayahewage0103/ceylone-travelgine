@@ -8,9 +8,26 @@ const LoginLayout = ({
   userType, 
   title, 
   subtitle,
-  backgroundVideo = "/13809264_2560_1440_60fps.mp4",
+  backgroundVideo,
   backgroundImage = "/Ceylon.png" 
 }) => {
+  // Set default background video based on user type if not provided
+  if (backgroundVideo === undefined) {
+    switch(userType) {
+      case 'tourist':
+        backgroundVideo = "/videos/tourist-bg.mp4";
+        break;
+      case 'guide':
+        backgroundVideo = "/videos/guide-bg.mp4";
+        break;
+      case 'vendor':
+        backgroundVideo = "/videos/vendor-bg.mp4";
+        break;
+      default:
+        backgroundVideo = "/13809264_2560_1440_60fps.mp4";
+    }
+  }
+
   // Helper to get the appropriate colors for each user type
   const getUserTypeColors = () => {
     switch(userType) {

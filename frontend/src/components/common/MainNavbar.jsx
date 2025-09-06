@@ -1,7 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { FaBars, FaBell, FaSearch, FaShoppingCart, FaAngleDown } from 'react-icons/fa';
+import { 
+  FaBars, 
+  FaBell, 
+  FaSearch, 
+  FaShoppingCart, 
+  FaAngleDown, 
+  FaSuitcase 
+} from 'react-icons/fa';
+import { 
+  RiDashboardLine, 
+  RiHeartLine, 
+  RiRoadMapLine, 
+  RiRobot2Line, 
+  RiThumbUpLine,
+  RiFileListLine, 
+  RiCalendarLine, 
+  RiUser3Line, 
+  RiBellLine, 
+  RiSettings3Line,
+  RiGroupLine,
+  RiVipDiamondLine
+} from 'react-icons/ri';
 import * as framerMotion from 'framer-motion';
 const { motion, AnimatePresence } = framerMotion;
 
@@ -34,15 +55,72 @@ const MainNavbar = () => {
     };
   }, []);
 
-  // Check login state (tourist)
+  // User data state
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    profilePic: '',
+    memberSince: '',
+    role: ''
+  });
+  
+  // Check login state (tourist) and fetch user data
   useEffect(() => {
     // Check for tourist session: token and no guide/vendor/admin role
     const token = localStorage.getItem('token');
-    // Optionally, check user role if stored (e.g. localStorage.getItem('role') === 'tourist')
-    // For now, assume if token exists and no guide/vendor id, it's a tourist
+    const userId = localStorage.getItem('userId');
     const isGuide = !!localStorage.getItem('guideId');
     const isVendor = !!localStorage.getItem('vendorId');
-    setIsTourist(!!token && !isGuide && !isVendor);
+    const isTouristUser = !!token && !isGuide && !isVendor;
+    
+    setIsTourist(isTouristUser);
+    
+    if (isTouristUser && userId) {
+      // Try to get user data from localStorage first for immediate display
+      const cachedUserData = localStorage.getItem('userData');
+      if (cachedUserData) {
+        try {
+          const parsed = JSON.parse(cachedUserData);
+          setUserData(parsed);
+        } catch (e) {
+          console.error("Failed to parse cached user data");
+        }
+      }
+      
+      // Then fetch fresh data from API
+      const fetchUserData = async () => {
+        try {
+          // Fetch from API endpoint
+          const response = await fetch(`/api/users/${userId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            const userData = {
+              name: data.fullName || data.name || 'Ceylon Tourist',
+              email: data.email || '',
+              profilePic: data.profilePic || '',
+              memberSince: data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-US', { 
+                month: 'short', 
+                year: 'numeric' 
+              }) : 'Sep 2023',
+              role: data.role || 'tourist'
+            };
+            
+            setUserData(userData);
+            // Cache for future use
+            localStorage.setItem('userData', JSON.stringify(userData));
+          }
+        } catch (err) {
+          console.error("Failed to fetch user data:", err);
+        }
+      };
+      
+      fetchUserData();
+    }
   }, []);
 
   const handleLogout = () => {
@@ -245,7 +323,14 @@ const MainNavbar = () => {
                 >
                   <div className="p-6 bg-gradient-to-r from-blue-50 to-teal-50 border-b border-blue-100">
                     <div className="flex justify-between items-center">
-                      <h3 className="font-bold text-lg text-gray-800">My Account</h3>
+                      <h3 className="font-bold text-lg text-gray-800">
+                        {new Date().getHours() < 12 
+                          ? "Good Morning" 
+                          : new Date().getHours() < 18 
+                            ? "Good Afternoon" 
+                            : "Good Evening"
+                        }
+                      </h3>
                       <button 
                         className="p-2 rounded-full hover:bg-white/50 text-gray-500 transition-colors" 
                         onClick={() => setSidebarOpen(false)}
@@ -256,22 +341,77 @@ const MainNavbar = () => {
                       </button>
                     </div>
                     <div className="flex items-center gap-4 mt-4">
-                      <img 
-                        src="https://randomuser.me/api/portraits/men/32.jpg" 
-                        alt="User" 
-                        className="h-16 w-16 rounded-full border-4 border-white shadow-sm"
-                      />
+                      {userData.profilePic ? (
+                        <div className="relative">
+                          <img 
+                            src={userData.profilePic} 
+                            alt={userData.name} 
+                            className="h-16 w-16 rounded-full border-4 border-white shadow-sm object-cover"
+                          />
+                          {userData.role === 'premium_tourist' && (
+                            <div className="absolute -right-1 -bottom-1 bg-yellow-500 text-white rounded-full p-1 border-2 border-white">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="h-16 w-16 rounded-full border-4 border-white shadow-sm bg-gradient-to-br from-teal-400 to-blue-500 flex items-center justify-center text-white text-xl font-bold relative">
+                          {userData.name.charAt(0)}
+                          {userData.role === 'premium_tourist' && (
+                            <div className="absolute -right-1 -bottom-1 bg-yellow-500 text-white rounded-full p-1 border-2 border-white">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                      )}
                       <div>
-                        <p className="font-medium text-gray-800">John Doe</p>
-                        <p className="text-sm text-gray-600">Tourist</p>
-                        <p className="text-xs text-teal-600 mt-1">Member since Sep 2023</p>
+                        <p className="font-medium text-gray-800">{userData.name}</p>
+                        <div className="flex items-center gap-2">
+                          {userData.role === 'premium_tourist' ? (
+                            <span className="px-2 py-0.5 bg-gradient-to-r from-yellow-500 to-amber-500 text-white text-xs rounded-full font-medium">
+                              Premium
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 bg-gradient-to-r from-teal-500 to-blue-500 text-white text-xs rounded-full font-medium">
+                              Tourist
+                            </span>
+                          )}
+                          <p className="text-xs text-gray-600">Member since {userData.memberSince}</p>
+                        </div>
+                        {userData.role === 'premium_tourist' ? (
+                          <div className="mt-1 flex items-center gap-1">
+                            <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                            <p className="text-xs text-green-600">Premium Benefits Active</p>
+                          </div>
+                        ) : (
+                          <Link to="/tourist/upgrade" className="text-xs text-blue-600 mt-1 hover:underline">
+                            Upgrade to Premium →
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>
                   
                   <div className="p-4 flex-1 overflow-y-auto">
                     <div className="space-y-1">
-                      <p className="text-xs font-semibold text-gray-500 px-3 mb-2">MY TRIPS</p>
+                      <p className="text-xs font-semibold text-gray-500 px-3 mb-2">MY DASHBOARD</p>
+                      <SidebarLink 
+                        to="/tourist/dashboard" 
+                        label="My Dashboard" 
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                          </svg>
+                        }
+                        onClick={() => setSidebarOpen(false)}
+                        isNew={true}
+                      />
+
+                      <p className="text-xs font-semibold text-gray-500 px-3 mt-6 mb-2">MY TRIPS</p>
                       <SidebarLink 
                         to="/tourist/my-tours" 
                         label="My Booked Tours" 
@@ -283,6 +423,17 @@ const MainNavbar = () => {
                           </svg>
                         }
                         onClick={() => setSidebarOpen(false)}
+                      />
+                      <SidebarLink 
+                        to="/tourist/trip-history" 
+                        label="Trip History" 
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                          </svg>
+                        }
+                        onClick={() => setSidebarOpen(false)}
+                        isNew={true}
                       />
                       <SidebarLink 
                         to="/tourist/plan-trip" 
@@ -305,6 +456,17 @@ const MainNavbar = () => {
                         }
                         onClick={() => setSidebarOpen(false)}
                       />
+                      <SidebarLink 
+                        to="/tourist/saved-places" 
+                        label="Saved Places" 
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                          </svg>
+                        }
+                        onClick={() => setSidebarOpen(false)}
+                        isNew={true}
+                      />
                       
                       <p className="text-xs font-semibold text-gray-500 px-3 mt-6 mb-2">SHOPPING</p>
                       <SidebarLink 
@@ -320,7 +482,7 @@ const MainNavbar = () => {
                       />
                       <SidebarLink 
                         to="/tourist/my-orders" 
-                        label="My Orders" 
+                        label="Order History" 
                         icon={
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" />
@@ -328,8 +490,97 @@ const MainNavbar = () => {
                         }
                         onClick={() => setSidebarOpen(false)}
                       />
+                      <SidebarLink 
+                        to="/tourist/wishlist" 
+                        label="My Wishlist" 
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                          </svg>
+                        }
+                        onClick={() => setSidebarOpen(false)}
+                        isNew={true}
+                      />
                       
+                      <p className="text-xs font-semibold text-gray-500 px-3 mt-6 mb-2">LOYALTY & REWARDS</p>
+                      <SidebarLink 
+                        to="/tourist/loyalty-rewards" 
+                        label="My Rewards" 
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                          </svg>
+                        }
+                        badge={userData?.role === 'premium_tourist' ? 'Gold' : 'Silver'}
+                        onClick={() => setSidebarOpen(false)}
+                        isNew={true}
+                      />
+                      <SidebarLink 
+                        to="/tourist/referrals" 
+                        label="Refer Friends" 
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                          </svg>
+                        }
+                        onClick={() => setSidebarOpen(false)}
+                      />
+                      
+                      <p className="text-xs font-semibold text-gray-500 px-3 mt-6 mb-2">RECENTLY VIEWED</p>
+                      <div className="bg-blue-50 rounded-lg p-2 mx-2 mb-4">
+                        <p className="text-xs text-gray-600 mb-2">You recently viewed:</p>
+                        <div className="space-y-2">
+                          <Link 
+                            to="/tours/kandy-heritage"
+                            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <div className="w-8 h-8 rounded-md bg-blue-100 flex-shrink-0 overflow-hidden">
+                              <img 
+                                src="/assets/tours/kandy-thumbnail.jpg" 
+                                alt="Kandy Heritage Tour"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "https://placehold.co/32x32?text=KH";
+                                }}
+                              />
+                            </div>
+                            <span className="truncate">Kandy Heritage Tour</span>
+                          </Link>
+                          <Link 
+                            to="/marketplace/products/ceylon-tea-collection"
+                            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <div className="w-8 h-8 rounded-md bg-green-100 flex-shrink-0 overflow-hidden">
+                              <img 
+                                src="/assets/products/tea-collection.jpg" 
+                                alt="Ceylon Tea Collection"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "https://placehold.co/32x32?text=TC";
+                                }}
+                              />
+                            </div>
+                            <span className="truncate">Ceylon Tea Collection</span>
+                          </Link>
+                        </div>
+                      </div>
+
                       <p className="text-xs font-semibold text-gray-500 px-3 mt-6 mb-2">ACCOUNT</p>
+                      <SidebarLink 
+                        to="/tourist/profile" 
+                        label="My Profile" 
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                          </svg>
+                        }
+                        onClick={() => setSidebarOpen(false)}
+                        isNew={true}
+                      />
                       <SidebarLink 
                         to="/ceylon-lence" 
                         label="Ceylon Lence" 
@@ -350,6 +601,86 @@ const MainNavbar = () => {
                         }
                         onClick={() => setSidebarOpen(false)}
                       />
+                      <SidebarLink 
+                        to="/tourist/notifications" 
+                        label="Notifications" 
+                        badge={notificationCount > 0 ? notificationCount.toString() : null}
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                          </svg>
+                        }
+                        onClick={() => setSidebarOpen(false)}
+                        isNew={true}
+                      />
+                      <SidebarLink 
+                        to="/tourist/travel-companions" 
+                        label="Travel Companions" 
+                        icon={
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                          </svg>
+                        }
+                        onClick={() => setSidebarOpen(false)}
+                        isNew={true}
+                      />
+                      <div className="px-3 py-4 mt-4 bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg mx-2">
+                        <h3 className="font-semibold text-sm text-gray-800 mb-3">Recommended for you</h3>
+                        <div className="space-y-2">
+                          <Link 
+                            to="/tours/sigiriya-day-trip"
+                            className="block bg-white p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 bg-blue-100 rounded overflow-hidden flex-shrink-0">
+                                <img 
+                                  src="/assets/tours/sigiriya.jpg"
+                                  alt="Sigiriya Day Trip"
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://placehold.co/48x48?text=SD";
+                                  }}
+                                />
+                              </div>
+                              <div>
+                                <p className="font-medium text-sm">Sigiriya Day Trip</p>
+                                <div className="flex items-center gap-1 mt-0.5">
+                                  <span className="text-xs bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded">
+                                    Trending
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    4.9 ★
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                          <Link 
+                            to="/ai-trip-planner"
+                            className="block bg-white p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 bg-teal-100 rounded overflow-hidden flex-shrink-0 flex items-center justify-center text-teal-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                              <div>
+                                <p className="font-medium text-sm">Create AI Trip Plan</p>
+                                <div className="flex items-center gap-1 mt-0.5">
+                                  <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
+                                    New Feature
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        </div>
+                      </div>
+
                       <div className="px-2 py-4">
                         <button 
                           className="w-full py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg flex items-center justify-center gap-2 transition-colors font-medium"
@@ -481,10 +812,10 @@ const NavLink = ({ to, label }) => (
   </Link>
 );
 
-const SidebarLink = ({ to, label, icon, badge, onClick }) => (
+const SidebarLink = ({ to, label, icon, badge, onClick, isNew }) => (
   <Link 
     to={to}
-    className="flex items-center gap-3 p-2 rounded-lg hover:bg-teal-50 text-gray-700 transition-colors"
+    className="flex items-center gap-3 p-2 rounded-lg hover:bg-teal-50 text-gray-700 transition-colors relative"
     onClick={onClick}
   >
     <div className="text-gray-500">{icon}</div>
@@ -492,6 +823,11 @@ const SidebarLink = ({ to, label, icon, badge, onClick }) => (
     {badge && (
       <span className="ml-auto bg-teal-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
         {badge}
+      </span>
+    )}
+    {isNew && (
+      <span className="absolute right-0 top-0 transform -translate-y-1/2 translate-x-1/4 bg-blue-500 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
+        NEW
       </span>
     )}
   </Link>

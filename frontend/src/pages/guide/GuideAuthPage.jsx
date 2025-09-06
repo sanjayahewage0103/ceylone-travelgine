@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import GuideRegisterSinglePage from '../../components/guide/GuideRegisterSinglePage';
+import GuideRegisterMultiStep from '../../components/guide/GuideRegisterMultiStep';
 import GuideLogin from '../../components/guide/GuideLogin';
 import LoginLayout from '../../components/auth/LoginLayout';
 import authService from '../../services/authService';
@@ -65,7 +65,7 @@ const GuideAuthPage = () => {
 
         <div className="animate-fadeIn">
           {view === 'register' ? (
-            <GuideRegisterSinglePage onSwitchToLogin={() => setView('login')} />
+            <GuideRegisterMultiStep onSwitchToLogin={() => setView('login')} />
           ) : (
             <>
               <GuideLogin 
