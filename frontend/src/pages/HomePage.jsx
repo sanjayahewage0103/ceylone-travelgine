@@ -294,10 +294,13 @@ const ExploreProductsSection = () => {
   
   // Fetch products from backend
   useEffect(() => {
-    // Try multiple base URLs in case proxy isn't set up correctly
+    // Try multiple base URLs in case proxy isn't set up correctly - prioritize direct backend connection
+    // We're prioritizing http://localhost:5000/api/products since this was identified as working in previous tests
     const apiUrls = [
-      '/api/products/public',
-      'http://localhost:5000/api/products'
+      'http://localhost:5000/api/products',  // Keep this as first priority since it's known to work
+      '/api/products',
+      'http://localhost:5000/api/products/public',
+      '/api/products/public'
     ];
     
     console.log("Attempting to fetch products...");
@@ -307,7 +310,19 @@ const ExploreProductsSection = () => {
       for (const url of urls) {
         try {
           console.log(`Trying API URL for products: ${url}`);
-          const response = await fetch(url);
+          // Create a timeout controller for fetch
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+          
+          const response = await fetch(url, {
+            headers: {
+              'Accept': 'application/json'
+            },
+            signal: controller.signal
+          });
+          
+          // Clear timeout if request completes successfully
+          clearTimeout(timeoutId);
           
           if (!response.ok) {
             console.warn(`Failed with status ${response.status} from ${url}`);
@@ -320,12 +335,14 @@ const ExploreProductsSection = () => {
           if (data && Array.isArray(data) && data.length > 0) {
             // Set products in state
             setProducts(data);
+            // Log success with the specific URL that worked
+            console.log(`✅ Products fetched successfully from ${url}`);
             return true;  // Success!
           } else {
             console.warn(`API at ${url} returned empty or invalid data`);
           }
         } catch (err) {
-          console.error(`Error fetching from ${url}:`, err);
+          console.error(`Error fetching from ${url}:`, err.name === 'AbortError' ? 'Request timed out' : err.message);
         }
       }
       
@@ -526,9 +543,10 @@ const TourPackagesSection = () => {
   // Fetch tours from backend
   useEffect(() => {
     // Try multiple base URLs in case proxy isn't set up correctly
+    // We'll try the direct URL first (which worked for products)
     const apiUrls = [
-      '/api/tour-packages/public/all',
-      'http://localhost:5000/api/tour-packages/public/all'
+      'http://localhost:5000/api/tour-packages/public/all',
+      '/api/tour-packages/public/all'
     ];
     
     console.log("Attempting to fetch tour packages...");
@@ -538,12 +556,21 @@ const TourPackagesSection = () => {
       for (const url of urls) {
         try {
           console.log(`Trying API URL: ${url}`);
+          
+          // Create a timeout controller for fetch
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+          
           const response = await fetch(url, {
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json'
-            }
+            },
+            signal: controller.signal
           });
+          
+          // Clear timeout if request completes successfully
+          clearTimeout(timeoutId);
           
           if (!response.ok) {
             console.warn(`Failed with status ${response.status} from ${url}`);
@@ -565,12 +592,13 @@ const TourPackagesSection = () => {
             
             // Set the tours in state
             setTours(data);
+            console.log(`✅ Tours fetched successfully from ${url}`);
             return true;  // Success!
           } else {
             console.warn(`API at ${url} returned empty or invalid data`);
           }
         } catch (err) {
-          console.error(`Error fetching from ${url}:`, err);
+          console.error(`Error fetching from ${url}:`, err.name === 'AbortError' ? 'Request timed out' : err.message);
         }
       }
       

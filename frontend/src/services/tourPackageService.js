@@ -54,9 +54,19 @@ const updateTourPackage = async (id, data, token) => {
 
 
 const getAllPublicTours = async (params = {}) => {
-  // params: { search, tourType, tourCategory, minPrice, maxPrice, sortBy, sortOrder }
+  // params: { search, tourType, tourCategory, minPrice, maxPrice, sortBy, sortOrder, limit, featured }
   const res = await axios.get(`${API_URL}/public/all`, { params });
   return res;
+};
+
+const getFeaturedTours = async (limit = 4) => {
+  // Get featured tours - sorted by rating/popularity
+  return getAllPublicTours({ 
+    sortBy: 'rating',
+    sortOrder: 'desc',
+    limit,
+    featured: true
+  });
 };
 
 const deleteTourPackage = async (id, token) => {
@@ -75,4 +85,5 @@ export default {
   updateTourPackage,
   deleteTourPackage,
   getAllPublicTours,
+  getFeaturedTours,
 };
