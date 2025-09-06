@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { FaBars, FaBell, FaSearch, FaShoppingCart, FaAngleDown } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
+import * as framerMotion from 'framer-motion';
+const { motion, AnimatePresence } = framerMotion;
 
 const MainNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
