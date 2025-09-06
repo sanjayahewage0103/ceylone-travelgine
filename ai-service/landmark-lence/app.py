@@ -15,7 +15,7 @@ CORS(app)
 
 # Define the path to your trained TFLite model
 # Make sure this path is correct and the model file exists where you run the script.
-MODEL_PATH = '../sri_lanka_landmark_classifier.tflite'
+MODEL_PATH = 'sri_lanka_landmark_classifier.tflite'
 
 # The list of your landmark classes in the correct order.
 # This must match the order the model was trained on.
