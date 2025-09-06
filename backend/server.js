@@ -23,7 +23,11 @@ dotenv.config();
 const app = express();
 
 
-app.use(cors());
+// Configure CORS for development
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
+  credentials: true
+}));
 app.use(express.json());
 // Serve uploaded images
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
