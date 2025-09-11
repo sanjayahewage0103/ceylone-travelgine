@@ -1,67 +1,53 @@
 import os
-import numpy as np
-import tensorflow as tf
+from dotenv import load_dotenv
+import google.generativeai as genai
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 import io
 
+# Load environment variables from .env file
+load_dotenv()
+
 # Initialize Flask app
 app = Flask(__name__)
 # Enable Cross-Origin Resource Sharing (CORS) to allow requests from the frontend
 CORS(app)
+ 
+# --- Gemini API Setup ---
 
-# --- Model and Class Names Loading ---
-
-# Define the path to your trained TFLite model
-# Make sure this path is correct and the model file exists where you run the script.
-MODEL_PATH = 'sri_lanka_landmark_classifier.tflite'
-
-# The list of your landmark classes in the correct order.
-# This must match the order the model was trained on.
-CLASS_NAMES = [
-    'Adams_Peak', 'Bambarakanda_Falls', 'Gal_Viharaya', 'Galle_Fort',
-    'Independence_Memorial_Hall', 'Jami_Ul-Alfar_Mosque', 'Jaya_Sri_Maha_Bodhi',
-    'Kelaniya_Raja_Maha_Vihara', 'Mihintale', 'Nallur_Kandaswamy_Temple',
-    'Nine_Arches_Bridge', 'Ruwanwelisaya_Stupa', 'Sigiriya', 'Temple_of_the_Tooth'
-]
-
-# Load the TFLite model and allocate tensors.
-try:
-    interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
-    interpreter.allocate_tensors()
-    print("TFLite model loaded successfully.")
-except Exception as e:
-    print(f"Error loading TFLite model: {e}")
-    # Exit if the model can't be loaded
+# Set up Gemini API
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+if not GEMINI_API_KEY:
+    print("Error: GEMINI_API_KEY environment variable not set.")
     exit()
 
-# Get model input and output details
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
-# Assuming the model expects 224x224 images
-IMG_HEIGHT, IMG_WIDTH = input_details[0]['shape'][1], input_details[0]['shape'][2]
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+# The list of your landmark classes in the correct order.
+CLASS_NAMES = [
+    'Adams Peak', 'Bambarakanda Falls', 'Gal Viharaya', 'Galle Fort',
+    'Independence Memorial Hall', 'Jami Ul-Alfar Mosque', 'Jaya Sri Maha Bodhi',
+    'Kelaniya Raja Maha Vihara', 'Mihintale', 'Nallur Kandaswamy Temple',
+    'Nine Arches Bridge', 'Ruwanwelisaya Stupa', 'Sigiriya', 'Temple of the Tooth'
+]
+
+# Image size for preprocessing
+IMG_HEIGHT, IMG_WIDTH = 224, 224
 
 # --- Image Preprocessing Function ---
 
 def preprocess_image(image_bytes):
     """
-    Takes image bytes, preprocesses it to the model's required format.
+    Takes image bytes, preprocesses it to PIL image for Gemini.
     """
     try:
         # Open the image using PIL
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
         # Resize the image
         img = img.resize((IMG_HEIGHT, IMG_WIDTH), Image.Resampling.NEAREST)
-        # Convert to numpy array
-        img_array = np.array(img, dtype=np.float32)
-        # Add a batch dimension
-        img_array = np.expand_dims(img_array, axis=0)
-        # Normalize the image if the model expects it (usually between 0 and 1 or -1 and 1)
-        # EfficientNet models typically don't require normalization with `tf.keras.applications.efficientnet.preprocess_input`
-        # but for a standard image input, scaling to [0,1] is a safe bet.
-        img_array /= 255.0
-        return img_array
+        return img
     except Exception as e:
         print(f"Error preprocessing image: {e}")
         return None
@@ -86,38 +72,44 @@ def predict():
     try:
         # Read image bytes
         image_bytes = file.read()
-        
+
         # Preprocess the image
         processed_image = preprocess_image(image_bytes)
         if processed_image is None:
             return jsonify({'error': 'Could not process image file. It might be corrupted or in an unsupported format.'}), 400
 
-        # Set the tensor to the input data
-        interpreter.set_tensor(input_details[0]['index'], processed_image)
+        # Create prompt for Gemini
+        prompt = f"Identify the landmark in this image. Choose from: {', '.join(CLASS_NAMES)}. Return only the name of the landmark."
 
-        # Run inference
-        interpreter.invoke()
+        # Generate content with Gemini
+        response = model.generate_content([processed_image, prompt])
 
-        # Get the prediction results
-        predictions = interpreter.get_tensor(output_details[0]['index'])[0]
+        # Debug: print full response object
+        print("Gemini API response:", response)
 
-        # Get the index of the highest probability
-        predicted_index = np.argmax(predictions)
-        
-        # Get the confidence score
-        confidence = float(predictions[predicted_index])
-        
-        # Get the class name
-        predicted_class_name = CLASS_NAMES[predicted_index].replace('_', ' ')
+        # Extract predicted class name from response
+        predicted_class_name = response.text.strip()
+
+        if not predicted_class_name:
+            return jsonify({'error': 'No prediction returned from Gemini API.'}), 500
+
+        # Check if the response is in CLASS_NAMES
+        if predicted_class_name not in CLASS_NAMES:
+            return jsonify({'error': 'Could not identify the landmark in the image.'}), 400
+
+        # For confidence, since Gemini doesn't provide probabilities, set to 100%
+        confidence = "100%"
 
         # Return the result as JSON
         return jsonify({
             'prediction': predicted_class_name,
-            'confidence': f"{confidence:.2%}" # Format as percentage
+            'confidence': confidence
         })
 
     except Exception as e:
-        print(f"An error occurred during prediction: {e}")
+        import traceback
+        print("Exception during prediction:")
+        traceback.print_exc()
         return jsonify({'error': 'An internal error occurred'}), 500
 
 # --- Health Check Endpoint ---
