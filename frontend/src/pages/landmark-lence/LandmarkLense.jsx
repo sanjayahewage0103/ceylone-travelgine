@@ -156,7 +156,8 @@ export default function LandmarkLens() {
         </div>
 
         {/* Animation for fade-in */}
-        <style jsx global>{`
+        <style>
+          {`
           @keyframes fade-in {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -164,7 +165,8 @@ export default function LandmarkLens() {
           .animate-fade-in {
             animation: fade-in 0.5s ease-out forwards;
           }
-        `}</style>
+        `}
+        </style>
       </div>
     </div>
   );

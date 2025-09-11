@@ -85,6 +85,7 @@ def generate_smart_itinerary(start_poi, num_days, max_budget, interests, model, 
         time_elapsed = start_duration
         current_sequence_ids = [current_start_poi['location_id']]
         last_poi_for_day = current_start_poi
+        rejected_for_day = set() # New: Track POIs that don't fit for the current day
 
         while time_elapsed < DAILY_ACTIVITY_TIME_MINUTES - 30:
             predicted_poi = None
@@ -92,17 +93,20 @@ def generate_smart_itinerary(start_poi, num_days, max_budget, interests, model, 
             padded_sequence = pad_sequences([token_list], maxlen=max_seq_length, padding='pre')
             predictions = model.predict(padded_sequence, verbose=0)[0]
             sorted_preds_indices = np.argsort(predictions)[::-1]
+            
+            all_excluded_ids = used_poi_ids.union(rejected_for_day) # New: Combine permanent and temporary exclusions
 
             for poi_int_index in sorted_preds_indices[:50]:
                 poi_id = int_to_poi.get(poi_int_index)
-                if poi_id and poi_id not in used_poi_ids:
+                if poi_id and poi_id not in all_excluded_ids: # Modified: Check against all excluded IDs
                     details_df = df[df['location_id'] == poi_id]
                     if not details_df.empty and "Accommodation" not in details_df.iloc[0]['primary_category']:
                         predicted_poi = details_df.iloc[0]
                         break
             
             if predicted_poi is None:
-                predicted_poi = get_content_based_suggestion(used_poi_ids, last_poi_for_day, interests, start_poi['district'], df, tfidf_matrix, tfidf)
+                # Modified: Pass all excluded IDs to the fallback
+                predicted_poi = get_content_based_suggestion(all_excluded_ids, last_poi_for_day, interests, start_poi['district'], df, tfidf_matrix, tfidf)
             
             if predicted_poi is None: break
 
@@ -118,6 +122,8 @@ def generate_smart_itinerary(start_poi, num_days, max_budget, interests, model, 
                 current_sequence_ids.append(predicted_poi['location_id'])
                 last_poi_for_day = predicted_poi
             else:
+                # Modified: If it doesn't fit, reject it for this day and try again
+                rejected_for_day.add(predicted_poi['location_id'])
                 continue 
 
         if day < num_days:
