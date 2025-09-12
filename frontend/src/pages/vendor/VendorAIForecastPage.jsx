@@ -10,12 +10,75 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 // --- Mock Data (In a real app, this comes from your main database) ---
 const VENDORS_AND_PRODUCTS = {
     1: { name: "Laksala", products: [
-        { itemId: 1, name: "Wooden Peacock Mask", price: 4500, avg_sales: 100, category: 'Handicrafts' }, { itemId: 2, name: "Elephant Figurine (Small)", price: 3000, avg_sales: 80, category: 'Handicrafts' }, { itemId: 3, name: "Traditional 'Geta Beraya' Drum", price: 7500, avg_sales: 20, category: 'Handicrafts' }, { itemId: 4, name: "Laksha (Lacquerwork) Vase", price: 5500, avg_sales: 22, category: 'Handicrafts' }, { itemId: 5, name: "Batik Wall Hanging", price: 6000, avg_sales: 90, category: 'Handicrafts' },
+        { itemId: 1, name: "Wooden Peacock Mask", price: 4500, avg_sales: 100, category: 'Handicrafts' },
+        { itemId: 2, name: "Elephant Figurine (Small)", price: 3000, avg_sales: 80, category: 'Handicrafts' },
+        { itemId: 3, name: "Traditional 'Geta Beraya' Drum", price: 7500, avg_sales: 20, category: 'Handicrafts' },
+        { itemId: 4, name: "Laksha (Lacquerwork) Vase", price: 5500, avg_sales: 22, category: 'Handicrafts' },
+        { itemId: 5, name: "Batik Wall Hanging", price: 6000, avg_sales: 90, category: 'Handicrafts' },
+    ]},
+    2: { name: "Stone 'N' String", products: [
+        { itemId: 6, name: "Moonstone Pendant (Silver)", price: 12000, avg_sales: 18, category: 'Gems & Jewellery' },
+        { itemId: 7, name: "Garnet Earrings (Studs)", price: 25000, avg_sales: 12, category: 'Gems & Jewellery' },
+        { itemId: 8, name: "Silver Filigree Bracelet", price: 18000, avg_sales: 22, category: 'Gems & Jewellery' },
+        { itemId: 9, name: "Gemstone Tree of Life", price: 9000, avg_sales: 35, category: 'Gems & Jewellery' },
+        { itemId: 10, name: "Amethyst Brooch", price: 35000, avg_sales: 8, category: 'Gems & Jewellery' },
+    ]},
+    3: { name: "Teaeli", products: [
+        { itemId: 11, name: "Pure Ceylon Black Tea Box (100g)", price: 1200, avg_sales: 150, category: 'Food & Spices' },
+        { itemId: 12, name: "Green Tea with Jasmine Pearls", price: 1350, avg_sales: 120, category: 'Food & Spices' },
+        { itemId: 13, name: "Spiced 'Masala' Chai Mix", price: 1500, avg_sales: 100, category: 'Food & Spices' },
+        { itemId: 14, name: "White Tea Silver Tips (50g)", price: 3500, avg_sales: 80, category: 'Food & Spices' },
+        { itemId: 15, name: "Earl Grey Infusion", price: 1250, avg_sales: 130, category: 'Food & Spices' },
+    ]},
+    4: { name: "MA's Kitchen", products: [
+        { itemId: 16, name: "MA's Kitchen Roasted Curry Powder", price: 550, avg_sales: 200, category: 'Food & Spices' },
+        { itemId: 17, name: "Goraka (Garcinia) Paste Jar", price: 600, avg_sales: 180, category: 'Food & Spices' },
+        { itemId: 18, name: "Kithul Treacle Bottle (350ml)", price: 900, avg_sales: 160, category: 'Food & Spices' },
+        { itemId: 19, name: "Herbal 'Kola Kanda' Porridge Mix", price: 750, avg_sales: 140, category: 'Food & Spices' },
+        { itemId: 20, name: "Dehydrated Jackfruit Pack (100g)", price: 950, avg_sales: 110, category: 'Food & Spices' },
     ]},
     5: { name: "Barefoot", products: [
-        { itemId: 21, name: "Handloom Cotton Saree", price: 8000, avg_sales: 30, category: 'Handicrafts' }, { itemId: 22, name: "Handloom Cotton Sarong", price: 3500, avg_sales: 50, category: 'Handicrafts' },
+        { itemId: 21, name: "Handloom Cotton Saree", price: 8000, avg_sales: 30, category: 'Handicrafts' },
+        { itemId: 22, name: "Handloom Cotton Sarong", price: 3500, avg_sales: 50, category: 'Handicrafts' },
+        { itemId: 23, name: "Colorful Cushion Cover", price: 2500, avg_sales: 75, category: 'Handicrafts' },
+        { itemId: 24, name: "Stuffed Animal (Elephant)", price: 3200, avg_sales: 60, category: 'Handicrafts' },
+        { itemId: 25, name: "Woven Reed Basket", price: 2200, avg_sales: 45, category: 'Handicrafts' },
     ]},
-    // ... add all other vendors and their products
+    6: { name: "Spa Ceylon", products: [
+        { itemId: 26, name: "King Coconut Hair Oil", price: 2500, avg_sales: 90, category: 'Wellness & Ayurveda' },
+        { itemId: 27, name: "Sandalwood & Vetiver Face Scrub", price: 3200, avg_sales: 80, category: 'Wellness & Ayurveda' },
+        { itemId: 28, name: "Ayurvedic Herbal Balm", price: 1800, avg_sales: 120, category: 'Wellness & Ayurveda' },
+        { itemId: 29, name: "Lemongrass Essential Oil (10ml)", price: 2800, avg_sales: 70, category: 'Wellness & Ayurveda' },
+        { itemId: 30, name: "Herbal Body Soap (Neem & Turmeric)", price: 950, avg_sales: 150, category: 'Wellness & Ayurveda' },
+    ]},
+    7: { name: "Prasanna Gem Centre", products: [
+        { itemId: 31, name: "Blue Sapphire Ring (0.5 Carat)", price: 150000, avg_sales: 5, category: 'Gems & Jewellery' },
+        { itemId: 32, name: "Star Sapphire Cufflinks", price: 85000, avg_sales: 7, category: 'Gems & Jewellery' },
+        { itemId: 33, name: "Padparadscha Sapphire Necklace", price: 250000, avg_sales: 3, category: 'Gems & Jewellery' },
+        { itemId: 34, name: "Cat's Eye Chrysoberyl (Loose)", price: 95000, avg_sales: 10, category: 'Gems & Jewellery' },
+        { itemId: 35, name: "Polished Rose Quartz Geode", price: 7000, avg_sales: 30, category: 'Gems & Jewellery' },
+    ]},
+    8: { name: "Dumbara Ratā Kalāle", products: [
+        { itemId: 36, name: "Dumbara Wall Mat", price: 9500, avg_sales: 12, category: 'Handicrafts' },
+        { itemId: 37, name: "Hana Fiber Coasters (Set of 4)", price: 1500, avg_sales: 50, category: 'Handicrafts' },
+        { itemId: 38, name: "Palm Leaf Box", price: 2800, avg_sales: 40, category: 'Handicrafts' },
+        { itemId: 39, name: "Dumbara Design Table Runner", price: 4500, avg_sales: 20, category: 'Handicrafts' },
+        { itemId: 40, name: "Hana Fiber Hat", price: 3800, avg_sales: 30, category: 'Handicrafts' },
+    ]},
+    9: { name: "Araliya Batiks", products: [
+        { itemId: 41, name: "Batik Ladies Kaftan", price: 5500, avg_sales: 35, category: 'Handicrafts' },
+        { itemId: 42, name: "Batik Gents Shirt", price: 4800, avg_sales: 40, category: 'Handicrafts' },
+        { itemId: 43, name: "Batik Tablecloth", price: 7200, avg_sales: 18, category: 'Handicrafts' },
+        { itemId: 44, name: "Batik Silk Scarf", price: 3000, avg_sales: 60, category: 'Handicrafts' },
+        { itemId: 45, name: "Batik Cushion Cover Set", price: 3500, avg_sales: 50, category: 'Handicrafts' },
+    ]},
+    10: { name: "Ceylon Spice Corridor", products: [
+        { itemId: 46, name: "Ceylon 'True' Cinnamon Sticks (100g)", price: 850, avg_sales: 300, category: 'Food & Spices' },
+        { itemId: 47, name: "Cardamom Pods (50g)", price: 950, avg_sales: 250, category: 'Food & Spices' },
+        { itemId: 48, name: "Whole Black Pepper (100g)", price: 700, avg_sales: 280, category: 'Food & Spices' },
+        { itemId: 49, name: "Turmeric Powder (100g)", price: 650, avg_sales: 260, category: 'Food & Spices' },
+        { itemId: 50, name: "Ceylon Cloves (50g)", price: 650, avg_sales: 220, category: 'Food & Spices' },
+    ]},
 };
 
 const VendorAIForecastPage = () => {
@@ -165,7 +228,7 @@ const ProductTable = ({ products }) => (
             <tbody>
                 {products.map(p => {
                     const color = p.demandLevel === 'High' ? 'text-red-600' : p.demandLevel === 'Moderate' ? 'text-yellow-600' : 'text-green-600';
-                    return <tr key={p.productName} className="border-b"><td className="px-4 py-2 font-medium">{p.productName}</td><td className="px-4 py-2 text-right font-bold">{p.predictedUnits}</td><td className="px-4 py-2 text-center font-semibold ${color}">${p.demandLevel}</td></tr>;
+                    return <tr key={p.productName} className="border-b"><td className="px-4 py-2 font-medium">{p.productName}</td><td className="px-4 py-2 text-right font-bold">{p.predictedUnits}</td><td className={`px-4 py-2 text-center font-semibold ${color}`}>{p.demandLevel}</td></tr>;
                 })}
             </tbody>
         </table>
