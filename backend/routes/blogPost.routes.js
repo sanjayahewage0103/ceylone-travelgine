@@ -92,12 +92,50 @@ router.get('/guide/:guideId', authenticate, async (req, res) => {
 });
 
 // Update blog post (guide only)
-router.put('/:id', authenticate, async (req, res) => {
+// Accepts: mainImage (single), sectionImages (array), sections (JSON string)
+router.put('/:id', authenticate, upload.fields([
+  { name: 'images', maxCount: 1 },
+  { name: 'sectionImages' }
+]), async (req, res) => {
   try {
     const post = await BlogPostService.getBlogPostById(req.params.id);
     if (!post) return res.status(404).json({ error: 'Not found' });
     if (post.author._id.toString() !== req.user.id) return res.status(403).json({ error: 'Forbidden' });
-    const updated = await BlogPostService.updateBlogPost(req.params.id, req.body);
+
+    const { title, subtitle, status, tags } = req.body;
+    let sections = [];
+    if (req.body.sections) {
+      sections = JSON.parse(req.body.sections);
+    }
+    // Attach section images
+    if (req.files && req.files['sectionImages']) {
+      req.files['sectionImages'].forEach((file, idx) => {
+        if (sections[idx]) {
+          sections[idx].image = `/uploads/${file.filename}`;
+        }
+      });
+    }
+    // Main image
+    let mainImage = post.mainImage; // Keep existing if not updated
+    if (req.files && req.files['images'] && req.files['images'][0]) {
+      mainImage = `/uploads/${req.files['images'][0].filename}`;
+    }
+    // Tags
+    let tagsArr = [];
+    if (tags) {
+      if (Array.isArray(tags)) tagsArr = tags;
+      else tagsArr = tags.split(',').map(t => t.trim()).filter(Boolean);
+    }
+    const data = {
+      title,
+      subtitle,
+      mainImage,
+      sections,
+      tags: tagsArr,
+      status,
+      author: req.user.id
+    };
+    const updated = await BlogPostService.updateBlogPost(req.params.id, data);
     res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });

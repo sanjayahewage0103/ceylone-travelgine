@@ -67,7 +67,23 @@ function App() {
                     <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 border-t pt-4">
                         <legend className="text-sm font-semibold text-cyan-700 mb-2">Core Scenario</legend>
                         <InputField label="District" name="district" value={inputs.district} onChange={handleInputChange} type="select">{districts.map(d => <option key={d} value={d}>{d}</option>)}</InputField>
-                        <InputField label="Month" name="Month" value={inputs.Month} onChange={handleInputChange} type="select"><option value="december">December</option><option value="january">January</option><option value="february">February</option></InputField>
+                        {/* <InputField label="Month" name="Month" value={inputs.Month} onChange={handleInputChange} type="select"><option value="december">December</option><option value="january">January</option><option value="february">February</option></InputField> */}
+                        
+                        <InputField label="Month" name="Month" value={inputs.Month} onChange={handleInputChange} type="select">
+                        <option value="january">January</option>
+                        <option value="february">February</option>
+                        <option value="march">March</option>
+                        <option value="april">April</option>
+                        <option value="may">May</option>
+                        <option value="june">June</option>
+                        <option value="july">July</option>
+                        <option value="august">August</option>
+                        <option value="september">September</option>
+                        <option value="october">October</option>
+                        <option value="november">November</option>
+                        <option value="december">December</option>
+                        </InputField>
+                        
                         <InputField label="Year" name="Year" value={inputs.Year} onChange={handleInputChange} type="number" />
                         <InputField label="Season" name="Season" value={inputs.Season} onChange={handleInputChange} type="select"><option>Northeast Monsoon</option><option>Southwest Monsoon</option><option>Inter-monsoon</option></InputField>
                     </fieldset>

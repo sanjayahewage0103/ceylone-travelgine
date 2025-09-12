@@ -142,16 +142,16 @@ export default function AllTours() {
   }
 
   // Mock featured/attraction data
-  const topAttractions = [
-    { name: 'Sigiriya Rock', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80', size: 'large' },
-    { name: 'Temple of the Tooth', img: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80', size: 'medium' },
-    { name: 'Galle Fort', img: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=400&q=80', size: 'small' },
-    { name: 'Yala National Park', img: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80', size: 'large' },
-    { name: 'Ella Nine Arches', img: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80', size: 'medium' },
-    { name: 'Mirissa Beach', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80', size: 'small' },
-    { name: 'Dambulla Cave Temple', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=400&q=80', size: 'medium' },
-    { name: 'Polonnaruwa Ruins', img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', size: 'small' },
-  ];
+const topAttractions = [
+  { name: 'Sigiriya Rock', img: '/images/image/sigiriya.jpeg', size: 'large' },
+  { name: 'Temple of the Tooth', img: '/images/image/temple%20of%20tooth.jpeg', size: 'medium' },
+  { name: 'Galle Fort', img: '/images/image/galle%20fort.jpeg', size: 'small' },
+  { name: 'Yala National Park', img: '/images/image/yala.jpeg', size: 'large' },
+  { name: 'Ella Nine Arches', img: '/images/image/nine%20arches.jpeg', size: 'medium' },
+  { name: 'Mirissa Beach', img: '/images/image/mirissa.jpeg', size: 'small' },
+  { name: 'Dambulla Cave Temple', img: '/images/image/dambulla.jpeg', size: 'medium' },
+  { name: 'Polonnaruwa Ruins', img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', size: 'small' },
+];
   
   // Using the dedicated fetched featured tours instead of slicing from all tours
   const goldenTours = featuredTours;

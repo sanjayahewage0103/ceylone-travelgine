@@ -25,15 +25,12 @@ exports.getProductCategories = async (req, res) => {
   }
 };
 
-// Get full vendor details for shops with approved products
+// Get full vendor details for all approved vendors
 exports.getProductShops = async (req, res) => {
   try {
-    const Product = require('../models/product.model');
     const Vendor = require('../models/vendor.model');
-    // Get vendorIds from approved products
-    const vendorIds = await Product.distinct('vendorId', { isApproved: 'approved', isActive: true });
-    // Get full vendor details for those vendors
-    const shops = await Vendor.find({ _id: { $in: vendorIds } })
+    // Get all approved vendors
+    const shops = await Vendor.find({ status: 'approved' })
       .select('shopName location description files.logoUrl')
       .lean();
     res.json(shops.map(shop => ({
@@ -51,7 +48,7 @@ exports.getProductShops = async (req, res) => {
 exports.getFeaturedProducts = async (req, res) => {
   try {
     const Product = require('../models/product.model');
-    const { search = '', category = '', minPrice, maxPrice, shop } = req.query;
+    const { search = '', category = '', minPrice, maxPrice, shop, vendorId } = req.query;
     let query = { isApproved: 'approved', isActive: true };
     if (search) {
       query.$or = [
@@ -76,9 +73,12 @@ exports.getFeaturedProducts = async (req, res) => {
       const vendorIds = vendors.map(v => v._id);
       query.vendorId = { $in: vendorIds };
     }
+    if (vendorId) {
+      query.vendorId = vendorId;
+    }
     const products = await Product.find(query)
       .sort({ createdAt: -1 })
-      .limit(search || category ? 100 : 10)
+      .limit(search || category || vendorId ? 100 : 10)
       .populate({
         path: 'vendorId',
         select: 'shopName businessRegNum location address userId',
@@ -127,6 +127,9 @@ exports.createProduct = async (req, res) => {
     if (!vendorProfile) {
       return res.status(400).json({ error: 'Vendor profile not found for this user.' });
     }
+    if (vendorProfile.status !== 'approved') {
+      return res.status(403).json({ error: 'Vendor profile is pending approval' });
+    }
     const vendorId = vendorProfile._id;
     const { originalItemId, name, description, price, category, stockQuantity } = req.body;
     // Images: multer files (array)
@@ -155,6 +158,9 @@ exports.getVendorProducts = async (req, res) => {
     if (!vendorProfile) {
       console.error('Vendor profile not found for user:', req.user._id);
       return res.status(404).json({ error: 'Vendor profile not found.' });
+    }
+    if (vendorProfile.status !== 'approved') {
+      return res.status(403).json({ error: 'Vendor profile is pending approval' });
     }
     console.log('getVendorProducts called for vendorId:', vendorProfile._id);
     const products = await productService.getVendorProducts(vendorProfile._id);

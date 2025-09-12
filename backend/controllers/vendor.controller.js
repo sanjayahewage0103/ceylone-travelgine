@@ -4,6 +4,7 @@ exports.getOwnProfile = async (req, res) => {
   try {
     const vendor = await Vendor.findOne({ userId: req.user._id });
     if (!vendor) return res.status(404).json({ error: 'Vendor profile not found' });
+    if (vendor.status !== 'approved') return res.status(403).json({ error: 'Vendor profile is pending approval' });
     res.json(vendor);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -14,6 +15,7 @@ exports.getVendorProfileById = async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.params.vendorId).select('-__v');
     if (!vendor) return res.status(404).json({ error: 'Vendor not found' });
+    if (vendor.status !== 'approved') return res.status(404).json({ error: 'Vendor not found' });
     res.json(vendor);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -22,6 +24,10 @@ exports.getVendorProfileById = async (req, res) => {
 
 exports.updateOwnProfile = async (req, res) => {
   try {
+    const vendor = await Vendor.findOne({ userId: req.user._id });
+    if (!vendor) return res.status(404).json({ error: 'Vendor profile not found' });
+    if (vendor.status !== 'approved') return res.status(403).json({ error: 'Vendor profile is pending approval' });
+
     // Prepare update fields
     const updateFields = { ...req.body };
 
@@ -35,13 +41,12 @@ exports.updateOwnProfile = async (req, res) => {
       }
     }
 
-    const vendor = await Vendor.findOneAndUpdate(
+    const updatedVendor = await Vendor.findOneAndUpdate(
       { userId: req.user._id },
       { $set: updateFields },
       { new: true }
     );
-    if (!vendor) return res.status(404).json({ error: 'Vendor profile not found' });
-    res.json(vendor);
+    res.json(updatedVendor);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

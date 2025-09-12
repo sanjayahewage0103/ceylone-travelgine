@@ -30,7 +30,11 @@ const VendorDashboardPage = () => {
         console.debug('Vendor profile loaded:', data);
       })
       .catch(err => {
-        setError('Failed to load vendor profile. Please login again.');
+        if (err.message.includes('pending approval')) {
+          setError('Your vendor profile is pending admin approval. Please wait for approval to access your dashboard.');
+        } else {
+          setError('Failed to load vendor profile. Please login again.');
+        }
         setLoading(false);
         console.error('Vendor profile load error:', err);
       });
@@ -39,14 +43,17 @@ const VendorDashboardPage = () => {
       .then(products => {
         setProducts(products);
         if (products.length === 0) {
-          setError('No products found for this vendor.');
           console.warn('No products found for this vendor.');
         } else {
           console.debug('Vendor products loaded:', products);
         }
       })
       .catch(err => {
-        setError('Failed to load vendor products.');
+        if (err.message.includes('pending approval')) {
+          // Already handled in profile error
+        } else {
+          setError('Failed to load vendor products.');
+        }
         console.error('Vendor products load error:', err);
       });
   }, []);

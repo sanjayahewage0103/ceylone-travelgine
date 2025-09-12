@@ -5,11 +5,11 @@ import ProductCard from '../../components/marketplace/ProductCard';
 import { motion } from 'framer-motion';
 
 const categoryBanners = {
-  'Handicrafts': '/category1.jpg',
-  'Gems & Jewellery': '/category2.jpg',
-  'Food & Spices': '/category3.jpg',
-  'Wellness & Ayurveda': '/category4.jpg',
-  'Other': '/category5.jpg',
+  'Handicrafts': 'http://localhost:5173/images/image/category1.jpeg',
+  'Gems & Jewellery': 'http://localhost:5173/images/image/category2.jpeg',
+  'Food & Spices': 'http://localhost:5173/images/image/category3.jpeg',
+  'Wellness & Ayurveda': 'http://localhost:5173/images/image/category4.jpeg',
+  'Other': 'http://localhost:5173/images/image/category5.jpeg',
 };
 
 const categoryDescriptions = {

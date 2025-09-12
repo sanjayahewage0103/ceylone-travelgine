@@ -18,7 +18,10 @@ class VendorService {
     if (res.status === 401) {
       throw new Error('Unauthorized: Token missing or invalid. Please login again.');
     }
-    if (!res.ok) throw new Error('Failed to fetch vendor profile');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ error: 'Failed to fetch vendor profile' }));
+      throw new Error(errorData.error || 'Failed to fetch vendor profile');
+    }
     return res.json();
   }
 

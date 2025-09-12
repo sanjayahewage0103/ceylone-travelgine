@@ -8,11 +8,11 @@ import ProductCard from '../../components/marketplace/ProductCard';
 const bannerImg = '/marketplace-banner.jpg'; // Use public asset URL
 
 const mockCategories = [
-  { id: 1, label: 'Handicrafts', image: '/category1.jpg' },
-  { id: 2, label: 'Gems & Jewellery', image: '/category2.jpg' },
-  { id: 3, label: 'Food & Spices', image: '/category3.jpg' },
-  { id: 4, label: 'Wellness & Ayurveda', image: '/category4.jpg' },
-  { id: 5, label: 'Other', image: '/category5.jpg' },
+  { id: 1, label: 'Handicrafts', image: 'http://localhost:5173/images/image/category1.jpeg' },
+  { id: 2, label: 'Gems & Jewellery', image: 'http://localhost:5173/images/image/category2.jpeg' },
+  { id: 3, label: 'Food & Spices', image: 'http://localhost:5173/images/image/category3.jpeg' },
+  { id: 4, label: 'Wellness & Ayurveda', image: 'http://localhost:5173/images/image/category4.jpeg' },
+  { id: 5, label: 'Other', image: 'http://localhost:5173/images/image/category5.jpeg' },
 ];
 
 
